@@ -1,0 +1,12 @@
+.paginationWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 10px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pageSizeControl {
+  min-width: 100px;
+}

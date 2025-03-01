@@ -1,0 +1,50 @@
+.wrapper {
+  padding-top: 105px;
+}
+.header {
+  position: fixed;
+  top: 0px;
+  left: 60px;
+  width: calc(100% - 60px);
+  background: #fff;
+  z-index: 2;
+  padding: 15px;
+}
+.row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+.right {
+  display: flex;
+  gap: 5px;
+  width: 100%;
+  justify-content: flex-end;
+}
+.autocomplete {
+  max-width: 300px;
+  margin-left: auto;
+}
+.autocompleteModal {
+  max-width: 100%;
+  margin-bottom: 20px;
+}
+.input{
+  margin-bottom: 20px;
+}
+@media (max-width: 530px) {
+  .row {
+    flex-wrap: wrap;
+  }
+  .autocomplete {
+    margin-left: 0px;
+  }
+  .right {
+    justify-content: flex-start;
+  }
+  .wrapper {
+    padding-top: 140px;
+  }
+}
