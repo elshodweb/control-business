@@ -121,7 +121,7 @@ const ProductTable: FC<ProductTableProps> = ({
                 <thead>
                   <tr>
                     <th>Berilgan sana</th>
-                    <th>Tugash sanasi</th>
+                    <th>Qaytarish Sanasi</th>
                     <th>Sotilgan miqdor</th>
                     <th>O'lchov bo'yicha sotilgan</th>
                     <th>Kundalik narx</th>

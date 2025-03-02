@@ -59,10 +59,10 @@ const DebtPage = () => {
     dayGiven: "",
   });
 
-    const setUser = (id: string) => {
-      dispatch(fetchUsers({ pageNumber: 1, pageSize: 200, search: "null" }));
-      setFormData({ ...formData, user_id: id });
-    };
+  const setUser = (id: string) => {
+    dispatch(fetchUsers({ pageNumber: 1, pageSize: 200, search: "null" }));
+    setFormData({ ...formData, user_id: id });
+  };
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [pageSize, setPageSize] = useState(10);
 
@@ -240,34 +240,50 @@ const DebtPage = () => {
           <Modal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
-            title={isEditMode ? "Edit Debt" : "Create Debt"}
+            title={isEditMode ? "Qarzni tahrirlash" : "Qarz yaratish"}
           >
             <form onSubmit={handleFormSubmit}>
-              {/* Remaining Debt */}
+              {/* Qolgan qarz */}
               <TextField
-                label="Remaining Debt"
+                label="Qolgan qarz"
                 value={formData.remaining_debt}
                 onChange={(e) =>
                   setFormData({ ...formData, remaining_debt: e.target.value })
                 }
+                required
                 fullWidth
                 margin="normal"
               />
 
-              {/* Comment */}
+              {/* Izoh */}
               <TextField
-                label="Comment"
+                label="Izoh"
                 value={formData.comment}
                 onChange={(e) =>
                   setFormData({ ...formData, comment: e.target.value })
                 }
+                required
                 fullWidth
                 margin="normal"
               />
 
-              {/* Date to be Given */}
+              {/* Berilgan sana */}
               <TextField
-                label="Date to be Given"
+                label="Berilgan sana"
+                type="date"
+                value={formData.dayGiven}
+                onChange={(e) =>
+                  setFormData({ ...formData, dayGiven: e.target.value })
+                }
+                required
+                fullWidth
+                margin="normal"
+                InputLabelProps={{ shrink: true }}
+              />
+
+              {/* Qaytarish Sanasi */}
+              <TextField
+                label="Qaytarish Sanasi"
                 type="date"
                 value={formData.dayToBeGiven}
                 onChange={(e) =>
@@ -275,25 +291,13 @@ const DebtPage = () => {
                 }
                 fullWidth
                 margin="normal"
+                required
                 InputLabelProps={{ shrink: true }}
               />
 
-              {/* Date Given */}
-              <TextField
-                label="Date Given"
-                type="date"
-                value={formData.dayGiven}
-                onChange={(e) =>
-                  setFormData({ ...formData, dayGiven: e.target.value })
-                }
-                fullWidth
-                margin="normal"
-                InputLabelProps={{ shrink: true }}
-              />
-
-              {/* isActive */}
+              {/* Faollik holati */}
               <FormControl fullWidth margin="normal">
-                <InputLabel id="isActive-label">Active Status</InputLabel>
+                <InputLabel id="isActive-label">Faollik holati</InputLabel>
                 <Select
                   labelId="isActive-label"
                   value={formData.isActive ? "true" : "false"}
@@ -303,23 +307,23 @@ const DebtPage = () => {
                       isActive: e.target.value === "true",
                     })
                   }
-                  label="Active Status"
+                  required
+                  label="Faollik holati"
                 >
-                  <MenuItem value="true">Active</MenuItem>
-                  <MenuItem value="false">Inactive</MenuItem>
+                  <MenuItem value="true">Faol</MenuItem>
+                  <MenuItem value="false">Faol emas</MenuItem>
                 </Select>
               </FormControl>
 
-              {/* User Selection */}
               <FormControl fullWidth margin="normal">
-                <InputLabel id="users-label">User</InputLabel>
+                <InputLabel id="users-label">Foydalanuvchi</InputLabel>
                 <Select
                   labelId="users-label"
                   value={formData.user_id}
                   onChange={(e) =>
                     setFormData({ ...formData, user_id: e.target.value })
                   }
-                  label="User"
+                  label="Foydalanuvchi"
                   required
                 >
                   {users.map((user, i) => (
@@ -337,7 +341,7 @@ const DebtPage = () => {
                 fullWidth
                 sx={{ marginTop: 2 }}
               >
-                {isEditMode ? "Save" : "Create"}
+                {isEditMode ? "Saqlash" : "Yaratish"}
               </Button>
             </form>
           </Modal>

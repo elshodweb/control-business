@@ -2,7 +2,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./styles.module.scss";
 import Title from "@/components/Title/Title";
-import { Autocomplete, TextField, Button } from "@mui/material";
+import {
+  Autocomplete,
+  TextField,
+  Button,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState, store } from "@/store/store";
 import { fetchUsers } from "@/features/users/users";
@@ -32,15 +38,15 @@ const Page = () => {
   const dispatch = useDispatch<AppDispatch>();
   const chackRef = useRef(null);
   const reactToPrintFn = useReactToPrint({
-    contentRef: chackRef, // Use contentRef in the newer version
-    onAfterPrint: () => setIsCheckVisible(false), // Hide after printing
+    contentRef: chackRef,
+    onAfterPrint: () => setIsCheckVisible(false),
   });
 
   const handlePrint = () => {
-    setIsCheckVisible(true); // Show the receipt before printing
+    setIsCheckVisible(true);
     setTimeout(() => {
-      reactToPrintFn(); // Trigger the print function
-    }, 100); // Ensure the state is updated before printing
+      reactToPrintFn();
+    }, 100);
   };
 
   const {
@@ -56,10 +62,28 @@ const Page = () => {
   );
   const { products } = useSelector((state: RootState) => state.products);
   const [originalProducts, setOriginalProducts] = useState<any[]>([]);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
+    "success"
+  );
+  const handleSnackbarClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") return;
+    setSnackbarOpen(false);
+  };
+  const showSnackbar = (message: string, severity: "success" | "error") => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
 
   const [sections, setSections] = useState<RentalDetails[]>([
     {
       selectedCategory: null,
+      comment: "",
       categoryTitle: "",
       selectedProduct: null,
       productTitle: "",
@@ -137,7 +161,6 @@ const Page = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    // Загружаем оригинальные продукты при первом рендере
     dispatch(
       fetchProducts({
         pageNumber: 1,
@@ -148,7 +171,7 @@ const Page = () => {
       })
     ).then((response: any) => {
       if (response.payload) {
-        setOriginalProducts(response.payload.results); // Предполагается, что данные продуктов приходят в response.payload
+        setOriginalProducts(response.payload.results);
       }
     });
   }, [dispatch]);
@@ -180,6 +203,7 @@ const Page = () => {
         startDate: "",
         endDate: "",
         unusedDays: 0,
+        comment: "",
       },
     ]);
   };
@@ -222,10 +246,11 @@ const Page = () => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    if (isCheckVisible) return; // Prevent double submission
+    if (isCheckVisible) return;
     const requestData = {
       user_id: selectedUser?.id || "",
       daily_price: sections[0]?.dailyPrice.toString() || "0",
+      comment: sections[0].comment,
       total_price: sections
         .reduce((acc, section) => acc + section.totalPrice, 0)
         .toString(),
@@ -244,26 +269,65 @@ const Page = () => {
 
     try {
       const response = await axiosInstance.post("/order/create", requestData);
+      if (response) {
+        showSnackbar("Harid muvaffaqiyatli bajarildi", "success");
+
+        setSelectedUser(null);
+
+        setPhone("");
+        setIsCheckVisible(false);
+        setSections([
+          {
+            selectedCategory: null,
+            comment: "",
+            categoryTitle: "",
+            selectedProduct: null,
+            productTitle: "",
+            quantity: 1,
+            rentalDays: 1,
+            totalPrice: 0,
+            dailyPrice: 0,
+            type: "",
+            price: 0,
+            startDate: "",
+            endDate: "",
+            unusedDays: 0,
+          },
+        ]);
+        setDelivery([
+          {
+            comment: "",
+            price: "",
+          },
+        ]);
+        setTitleOrId("");
+      }
     } catch (error: any) {
-      console.error("Ошибка при отправке данных:", error);
-      alert(
-        `Ошибка при отправке данных: ${
-          error.response?.data?.message || error.message
-        }`
-      );
+      showSnackbar("Harid qilishda hatto yuzberdi: " + error, "error");
     }
   };
 
   const handleSelectProduct = (index: number, value: any) => {
-    if (!value) return;
+    if (!value || !value.id) return;
 
     const newSections = [...sections];
     newSections[index].selectedProduct = value;
-    newSections[index].dailyPrice = value?.price * sections[index].quantity;
+    newSections[index].dailyPrice = value.price * sections[index].quantity;
     newSections[index].totalPrice = value.price * sections[index].quantity;
     newSections[index].price = value.price;
     newSections[index].type = value.type;
+    console.log("category::", value.category_id);
+
+    if (value.category_id) {
+      newSections[index].selectedCategory = { id: value.category_id.id };
+      newSections[index].categoryTitle = value.category_id.title || "";
+      console.log(value.category_id.title);
+    } else {
+      newSections[index].selectedCategory = null;
+      newSections[index].categoryTitle = "";
+    }
     setSections(newSections);
+    setTitleOrId(value.title);
   };
 
   const handleQuantityChange = (index: number, value: number) => {
@@ -271,6 +335,12 @@ const Page = () => {
     newSections[index].quantity = value;
     updateTotalPrice(index, newSections[index]);
     updateDailyPrice(index, newSections[index]);
+    setSections(newSections);
+  };
+
+  const handleCommentChange = (index: number, value: string) => {
+    const newSections = [...sections];
+    newSections[index].comment = value;
     setSections(newSections);
   };
 
@@ -282,7 +352,6 @@ const Page = () => {
       setSections(newSections);
     }
   };
-
   const updateDailyPrice = (index: number, section: any) => {
     if (section.selectedProduct) {
       const dailyPrice = +section.selectedProduct.price * section.quantity;
@@ -306,7 +375,6 @@ const Page = () => {
     } else {
       newSections[index].rentalDays = 1;
     }
-
     updateTotalPrice(index, newSections[index]);
     setSections(newSections);
   };
@@ -342,7 +410,7 @@ const Page = () => {
   const setUser = async (id: string) => {
     await dispatch(fetchUsers({ pageNumber: 1, pageSize: 200, search: phone }));
 
-    const updatedUsers = store.getState().users.users; // Получаем актуальные данные из стора
+    const updatedUsers = store.getState().users.users;
     const user = updatedUsers.find((user) => user.id === id);
 
     if (user) {
@@ -356,7 +424,15 @@ const Page = () => {
       <div className={styles.row}>
         <Title>Harid qilish</Title>
       </div>
-
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
       <div className={styles.content}>
         <div className={styles.rowDiv}>
           <div className={styles.userSection}>
@@ -430,6 +506,7 @@ const Page = () => {
                       <TextField
                         {...params}
                         size="small"
+                        value={section.categoryTitle}
                         label="Kategoriya"
                         variant="outlined"
                       />
@@ -490,6 +567,7 @@ const Page = () => {
                         required
                         size="small"
                         type="number"
+                        minRows={0}
                         variant="outlined"
                         value={section.price}
                         disabled
@@ -503,9 +581,11 @@ const Page = () => {
                         type="number"
                         variant="outlined"
                         value={section.quantity}
-                        onChange={(e) =>
-                          handleQuantityChange(index, +e.target.value)
-                        }
+                        onChange={(e) => {
+                          if (+e.target.value > 0) {
+                            handleQuantityChange(index, +e.target.value);
+                          }
+                        }}
                       />
                     </div>
                   </div>
@@ -575,8 +655,24 @@ const Page = () => {
                         type="number"
                         variant="outlined"
                         value={sections[index].unusedDays}
+                        onChange={(e) => {
+                          if (+e.target.value > -1) {
+                            updateUnusedDays(index, section, +e.target.value);
+                          }
+                        }}
+                      />
+                    </div>
+
+                    <div className={styles.right}>
+                      <h4 className={styles.title}>Izoh</h4>
+                      <TextField
+                        required
+                        size="small"
+                        type="text"
+                        variant="outlined"
+                        value={sections[index].comment}
                         onChange={(e) =>
-                          updateUnusedDays(index, section, +e.target.value)
+                          handleCommentChange(index, e.target.value)
                         }
                       />
                     </div>
@@ -585,7 +681,7 @@ const Page = () => {
               )}
 
               <div className={styles.productRow}>
-                {index !== 0 && (
+                {index !== 0 ? (
                   <Button
                     className={styles.del}
                     size="small"
@@ -596,6 +692,8 @@ const Page = () => {
                   >
                     <FaTrash size={19} />
                   </Button>
+                ) : (
+                  <div className={styles.none}></div>
                 )}
               </div>
             </div>
@@ -631,7 +729,7 @@ const Page = () => {
                 </div>
 
                 <div className={styles.carRight}>
-                  <h4 className={styles.title}>Kommentariya</h4>
+                  <h4 className={styles.title}>Izoh</h4>
                   <TextField
                     required
                     size="small"

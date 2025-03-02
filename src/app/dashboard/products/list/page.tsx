@@ -2,7 +2,6 @@
 import React, { forwardRef, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "@/utils/axiosInstance";
-import CustomTable from "@/components/Table/Table";
 import Title from "@/components/Title/Title";
 import Modal from "@/components/Modal/Modal";
 import { RootState, AppDispatch } from "@/store/store";

@@ -18,6 +18,7 @@ export type RentalDetails = {
   action?: ActionTypesEnum;
   status?: string;
   unusedDays: number;
+  comment: string;
 };
 
 export type DeliveryDetails = {

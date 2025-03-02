@@ -23,6 +23,7 @@ import {
 import { fetchUsers } from "@/features/users/users";
 import Loader from "@/components/Loader/Loader";
 import UserModalForm from "@/components/UserModalForm/UserModalForm";
+import Search from "@/components/Search/Search";
 
 // Компонент Alert для уведомлений
 const Alert = forwardRef<HTMLDivElement, React.ComponentProps<typeof MuiAlert>>(
@@ -36,7 +37,7 @@ const CarServicePage = () => {
   const { carServices, status, error, pagination } = useSelector(
     (state: RootState) => state.carServices
   );
-
+  const [search, setSearch] = useState("");
   const {
     users,
     status: Ustatus,
@@ -205,6 +206,23 @@ const CarServicePage = () => {
               <MenuItem value="expense">Xarajat</MenuItem>
             </Select>
           </FormControl>
+          <Search
+            onChange={(e) => {
+              setSearch(e.target.value);
+              dispatch(
+                fetchUsers({
+                  pageNumber: 1,
+                  pageSize,
+                  search: e.target.value,
+                })
+              );
+            }}
+            placeholder="Qidirish"
+            search={search}
+            onClick={() => {
+              dispatch(fetchUsers({ pageNumber: 1, pageSize, search: search }));
+            }}
+          />
         </div>
       </div>
 
