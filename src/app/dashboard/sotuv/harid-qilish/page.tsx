@@ -363,6 +363,12 @@ const Page = () => {
             <h4 className={styles.numberOfProduct}>
               Foydalanuvchi tanlash <FaUser size={19} />
             </h4>
+            <input
+              type="text"
+              style={{ display: "none" }}
+              autoComplete="username"
+            />
+
             <Autocomplete
               className={styles.autocomplete}
               id="user-selection-autocomplete"
@@ -374,6 +380,7 @@ const Page = () => {
                   option.phone || "Нет телефона"
                 })`
               }
+              value={selectedUser}
               isOptionEqualToValue={(option, value) =>
                 option.phone === value.phone
               }
@@ -385,13 +392,6 @@ const Page = () => {
                   size="small"
                   label="Telefon nomer"
                   variant="outlined"
-                  autoComplete="off"
-                  inputProps={{
-                    ...params.inputProps,
-                    autoComplete: "new-password",
-                  }}
-                  name={`phone-${Math.random()}`} // Уникальное имя
-                  id={`phone-${Math.random()}`} // Уникальный id
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                 />
