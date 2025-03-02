@@ -76,6 +76,7 @@ const LoginPage = () => {
             fullWidth
             margin="normal"
             value={phone}
+            slotProps={{ inputLabel: { shrink: true } }}
             onChange={(e) => setPhone(e.target.value)}
             required
           />
@@ -86,6 +87,7 @@ const LoginPage = () => {
             fullWidth
             margin="normal"
             value={password}
+            slotProps={{ inputLabel: { shrink: true } }}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
