@@ -16,6 +16,14 @@
   gap: 10px;
 }
 
+.navRight {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  justify-content: flex-end;
+
+  align-items: flex-end;
+}
 .select {
   max-width: 300px;
   min-width: 160px;

@@ -144,47 +144,73 @@ const OrderPage = () => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.row}>
-        <Title>Buyurymalar</Title>
-
-        <div className={styles.datePicker}>
-          <label>Boshlanish sanasi:</label>
-          <input
-            type="date"
-            value={startDate || ""}
-            onChange={(e) => setStartDate(e.target.value || undefined)}
-          />
+        <div className={styles.title}>
+          <Title>Buyurymalar</Title>
         </div>
-        <div className={styles.datePicker}>
-          <label>Tugash sanasi:</label>
-          <input
-            type="date"
-            value={endDate || ""}
-            onChange={(e) => setEndDate(e.target.value || undefined)}
-          />
-        </div>
+        <div className={styles.navRight}>
+          <div className={styles.datePicker}>
+            <label>Boshlanish sanasi:</label>
+            <input
+              type="date"
+              value={startDate || ""}
+              onChange={(e) => setStartDate(e.target.value || undefined)}
+            />
+          </div>
+          <div className={styles.datePicker}>
+            <label>Tugash sanasi:</label>
+            <input
+              type="date"
+              value={endDate || ""}
+              onChange={(e) => setEndDate(e.target.value || undefined)}
+            />
+          </div>
 
-        <FormControl size="small" className={styles.select} fullWidth>
-          <InputLabel id="is-active-label">Holatini tanlang</InputLabel>
-          <Select
-            labelId="is-active-label"
-            value={isActive !== undefined ? isActive.toString() : ""}
-            onChange={(e) =>
-              setIsActive(
-                e.target.value === "" ? undefined : e.target.value === "true"
-              )
-            }
-            label="Holatini tanlang"
-          >
-            <MenuItem value="">Barchasi</MenuItem>
-            <MenuItem value="true">Faol</MenuItem>
-            <MenuItem value="false">Faol emas</MenuItem>
-          </Select>
-        </FormControl>
+          <FormControl size="small" className={styles.select} fullWidth>
+            <InputLabel id="is-active-label">Holatini tanlang</InputLabel>
+            <Select
+              labelId="is-active-label"
+              value={isActive !== undefined ? isActive.toString() : ""}
+              onChange={(e) =>
+                setIsActive(
+                  e.target.value === "" ? undefined : e.target.value === "true"
+                )
+              }
+              label="Holatini tanlang"
+            >
+              <MenuItem value="">Barchasi</MenuItem>
+              <MenuItem value="true">Faol</MenuItem>
+              <MenuItem value="false">Faol emas</MenuItem>
+            </Select>
+          </FormControl>
 
-        <Search
-          onChange={(e) => {
-            const value = e.target.value;
-            if (value == "") {
+          <Search
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value == "") {
+                dispatch(
+                  fetchOrdersWithFilter({
+                    title: "",
+                    pageNumber: 1,
+                    pageSize,
+                    isActive,
+                    nomer,
+                    name,
+                    startDate,
+                    endDate,
+                  })
+                );
+              }
+              if (!isNaN(parseFloat(value))) {
+                setNomer(value); // Use as phone number or ID
+                setName(""); // Clear name search
+              } else {
+                setName(value); // Use as name
+                setNomer(""); // Clear phone number search
+              }
+              setSearch(value);
+            }}
+            placeholder="Qidirish (Nomi, Telefon)"
+            onClick={() => {
               dispatch(
                 fetchOrdersWithFilter({
                   title: "",
@@ -197,33 +223,10 @@ const OrderPage = () => {
                   endDate,
                 })
               );
-            }
-            if (!isNaN(parseFloat(value))) {
-              setNomer(value); // Use as phone number or ID
-              setName(""); // Clear name search
-            } else {
-              setName(value); // Use as name
-              setNomer(""); // Clear phone number search
-            }
-            setSearch(value);
-          }}
-          placeholder="Qidirish (Nomi, Telefon)"
-          onClick={() => {
-            dispatch(
-              fetchOrdersWithFilter({
-                title: "",
-                pageNumber: 1,
-                pageSize,
-                isActive,
-                nomer,
-                name,
-                startDate,
-                endDate,
-              })
-            );
-          }}
-          search={search}
-        />
+            }}
+            search={search}
+          />
+        </div>
       </div>
 
       <Snackbar

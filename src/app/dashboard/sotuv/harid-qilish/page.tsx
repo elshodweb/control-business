@@ -8,6 +8,8 @@ import {
   Button,
   Snackbar,
   Alert,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState, store } from "@/store/store";
@@ -80,7 +82,12 @@ const Page = () => {
     setSnackbarOpen(true);
   };
 
-  const [sections, setSections] = useState<RentalDetails[]>([
+  const [sections, setSections] = useState<
+    (RentalDetails & {
+      hasDiscount: boolean;
+      discountPrice: number;
+    })[]
+  >([
     {
       selectedCategory: null,
       comment: "",
@@ -96,6 +103,8 @@ const Page = () => {
       startDate: "",
       endDate: "",
       unusedDays: 0,
+      hasDiscount: false,
+      discountPrice: 0,
     },
   ]);
   const { carServices, status, error } = useSelector(
@@ -204,6 +213,8 @@ const Page = () => {
         endDate: "",
         unusedDays: 0,
         comment: "",
+        hasDiscount: false,
+        discountPrice: 0,
       },
     ]);
   };
@@ -244,6 +255,7 @@ const Page = () => {
     updateProducts(index, value?.id, newSections[index].productTitle);
   };
 
+  // Update the handleSubmit function to use discounted prices
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     if (isCheckVisible) return;
@@ -292,6 +304,8 @@ const Page = () => {
             startDate: "",
             endDate: "",
             unusedDays: 0,
+            hasDiscount: false,
+            discountPrice: 0,
           },
         ]);
         setDelivery([
@@ -316,13 +330,14 @@ const Page = () => {
     newSections[index].totalPrice = value.price * sections[index].quantity;
     newSections[index].price = value.price;
     newSections[index].type = value.type;
+    newSections[index].discountPrice = value.price; // Initialize discount price to regular price
 
     if (value.category_id) {
-       const categoryFromList = categories.find(
+      const categoryFromList = categories.find(
         (cat) => cat.id === value.category_id.id
       );
 
-       newSections[index].selectedCategory = categoryFromList || {
+      newSections[index].selectedCategory = categoryFromList || {
         id: value.category_id.id,
         title: value.category_id.title,
       };
@@ -423,6 +438,39 @@ const Page = () => {
       setPhone(user.phone);
       setSelectedUser(user);
     }
+  };
+
+  // Add these functions to handle discount changes
+  const handleDiscountChange = (index: number, checked: boolean) => {
+    const newSections = [...sections];
+    newSections[index].hasDiscount = checked;
+
+    if (!checked) {
+      // Reset discount price and recalculate total price based on original price
+      newSections[index].discountPrice = 0;
+      updateTotalPrice(index, newSections[index]);
+    }
+
+    setSections(newSections);
+  };
+
+  const handleDiscountPriceChange = (index: number, value: number) => {
+    if (value < 0) return;
+
+    const newSections = [...sections];
+    newSections[index].discountPrice = value;
+
+    // Update total price based on discounted price
+    if (newSections[index].selectedProduct) {
+      const totalPrice =
+        value * newSections[index].quantity * newSections[index].rentalDays;
+      newSections[index].totalPrice = totalPrice;
+
+      // Also update daily price
+      newSections[index].dailyPrice = value * newSections[index].quantity;
+    }
+
+    setSections(newSections);
   };
 
   return (
@@ -655,6 +703,52 @@ const Page = () => {
 
                   <div className={styles.productRow}>
                     <div className={styles.left}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={section.hasDiscount}
+                            onChange={(e) =>
+                              handleDiscountChange(index, e.target.checked)
+                            }
+                          />
+                        }
+                        label="Chegirma qo'shish"
+                      />
+                    </div>
+                  </div>
+
+                  {section.hasDiscount && (
+                    <div className={styles.productRow}>
+                      <div className={styles.left}>
+                        <h4 className={styles.title}>Chegirma narxi</h4>
+                        <TextField
+                          required
+                          size="small"
+                          type="number"
+                          variant="outlined"
+                          value={section.discountPrice}
+                          onChange={(e) => {
+                            if (+e.target.value >= 0) {
+                              handleDiscountPriceChange(index, +e.target.value);
+                            }
+                          }}
+                        />
+                      </div>
+                      <div className={styles.right}>
+                        <h4 className={styles.title}>Chegirma bilan narx</h4>
+                        <TextField
+                          size="small"
+                          type="number"
+                          variant="outlined"
+                          value={section.totalPrice}
+                          disabled
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className={styles.productRow}>
+                    <div className={styles.left}>
                       <h4 className={styles.title}>Ishlatilmagan kunlar</h4>
                       <TextField
                         required
@@ -826,6 +920,12 @@ const Page = () => {
                     `${section.type == "dona" ? " dona" : " metr"}`,
                   price_per_day: section.dailyPrice.toString() + " so'm",
                   unused_days: "0",
+                  ...(section.hasDiscount
+                    ? { original_price: section.price + " so'm" }
+                    : {}),
+                  ...(section.hasDiscount
+                    ? { discount_price: section.discountPrice + " so'm" }
+                    : {}),
                   ...(section.startDate.length
                     ? { given_date: section.startDate }
                     : {}),
