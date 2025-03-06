@@ -1,6 +1,7 @@
 export type RentalDetails = {
   selectedCategory: {
     id: string;
+    title: string;
   } | null;
   categoryTitle: string;
   selectedProduct: {

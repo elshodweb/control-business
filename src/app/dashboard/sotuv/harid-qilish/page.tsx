@@ -316,16 +316,22 @@ const Page = () => {
     newSections[index].totalPrice = value.price * sections[index].quantity;
     newSections[index].price = value.price;
     newSections[index].type = value.type;
-    console.log("category::", value.category_id);
 
     if (value.category_id) {
-      newSections[index].selectedCategory = { id: value.category_id.id };
+       const categoryFromList = categories.find(
+        (cat) => cat.id === value.category_id.id
+      );
+
+       newSections[index].selectedCategory = categoryFromList || {
+        id: value.category_id.id,
+        title: value.category_id.title,
+      };
       newSections[index].categoryTitle = value.category_id.title || "";
-      console.log(value.category_id.title);
     } else {
       newSections[index].selectedCategory = null;
       newSections[index].categoryTitle = "";
     }
+
     setSections(newSections);
     setTitleOrId(value.title);
   };
@@ -498,6 +504,7 @@ const Page = () => {
                     onChange={(event, value) =>
                       handleChangeCategory(index, value)
                     }
+                    value={section.selectedCategory}
                     getOptionLabel={(option) => option.title || "Без названия"}
                     isOptionEqualToValue={(option, value) =>
                       option.id === value.id
