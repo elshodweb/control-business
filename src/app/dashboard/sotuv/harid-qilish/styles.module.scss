@@ -115,8 +115,8 @@ $transition: all 0.3s ease;
 .formRow {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 5px;
+  margin-bottom: 5px;
   width: 100%;
 }
 
@@ -128,7 +128,6 @@ $transition: all 0.3s ease;
 // Form Components
 .autocomplete {
   width: 100%;
-  margin-bottom: $spacing-md;
 }
 
 .dateInput {

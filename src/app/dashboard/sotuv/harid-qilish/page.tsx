@@ -660,6 +660,22 @@ const Page = () => {
                         fullWidth
                       />
                     </div>
+                    <div className={styles.formColumn}>
+                      <h4 className={styles.itemTitle}>Ishlatilmagan kunlar</h4>
+                      <TextField
+                        required
+                        size="small"
+                        type="number"
+                        variant="outlined"
+                        value={sections[index].unusedDays}
+                        onChange={(e) => {
+                          if (+e.target.value > -1) {
+                            updateUnusedDays(index, section, +e.target.value);
+                          }
+                        }}
+                        fullWidth
+                      />
+                    </div>
                   </div>
 
                   {/* Date Selection Row */}
@@ -703,6 +719,21 @@ const Page = () => {
                         variant="outlined"
                         value={sections[index].totalPrice}
                         disabled
+                        fullWidth
+                      />
+                    </div>
+
+                    <div className={styles.formColumn}>
+                      <h4 className={styles.itemTitle}>Izoh</h4>
+                      <TextField
+                        required
+                        size="small"
+                        type="text"
+                        variant="outlined"
+                        value={sections[index].comment}
+                        onChange={(e) =>
+                          handleCommentChange(index, e.target.value)
+                        }
                         fullWidth
                       />
                     </div>
@@ -758,40 +789,6 @@ const Page = () => {
                       </div>
                     </div>
                   )}
-
-                  {/* Unused Days and Comment Row */}
-                  <div className={styles.formRow}>
-                    <div className={styles.formColumn}>
-                      <h4 className={styles.itemTitle}>Ishlatilmagan kunlar</h4>
-                      <TextField
-                        required
-                        size="small"
-                        type="number"
-                        variant="outlined"
-                        value={sections[index].unusedDays}
-                        onChange={(e) => {
-                          if (+e.target.value > -1) {
-                            updateUnusedDays(index, section, +e.target.value);
-                          }
-                        }}
-                        fullWidth
-                      />
-                    </div>
-                    <div className={styles.formColumn}>
-                      <h4 className={styles.itemTitle}>Izoh</h4>
-                      <TextField
-                        required
-                        size="small"
-                        type="text"
-                        variant="outlined"
-                        value={sections[index].comment}
-                        onChange={(e) =>
-                          handleCommentChange(index, e.target.value)
-                        }
-                        fullWidth
-                      />
-                    </div>
-                  </div>
                 </>
               )}
 
