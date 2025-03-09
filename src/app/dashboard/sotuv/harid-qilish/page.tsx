@@ -490,9 +490,9 @@ const Page = () => {
       <div className={styles.content}>
         <div className={styles.rowDiv}>
           <div className={styles.userSection}>
-            <h4 className={styles.numberOfProduct}>
-              Foydalanuvchi tanlash <FaUser size={19} />
-            </h4>
+            <h2 className={styles.sectionTitle}>
+              <FaUser size={19} /> Foydalanuvchi tanlash
+            </h2>
             <input
               type="text"
               style={{ display: "none" }}
@@ -528,7 +528,7 @@ const Page = () => {
               )}
             />
             {selectedUser && (
-              <div>
+              <div className={styles.userDetails}>
                 <h5>Tanlangan foydalanuvchi</h5>
                 <p>Ism: {selectedUser.name}</p>
                 <p>Telefon: {selectedUser.phone}</p>
@@ -539,12 +539,12 @@ const Page = () => {
 
           {sections.map((section, index) => (
             <div key={index} className={styles.product}>
-              <h2 className={styles.numberOfProduct}>
-                {index + 1}-Mahsulot <FaBox size={19} />
+              <h2 className={styles.sectionTitle}>
+                <FaBox size={19} /> {index + 1}-Mahsulot
               </h2>
-              <div className={styles.productRow}>
-                <div className={styles.left}>
-                  <h4 className={styles.title}>Mahsulot kategoriyasini</h4>
+              <div className={styles.formRow}>
+                <div className={styles.formColumn}>
+                  <h4 className={styles.itemTitle}>Mahsulot kategoriyasini</h4>
                   <Autocomplete
                     className={styles.autocomplete}
                     size="small"
@@ -568,8 +568,8 @@ const Page = () => {
                     )}
                   />
                 </div>
-                <div className={styles.right}>
-                  <h4 className={styles.title}>Mahsulotni tanlash</h4>
+                <div className={styles.formColumn}>
+                  <h4 className={styles.itemTitle}>Mahsulotni tanlash</h4>
                   <Autocomplete
                     className={styles.autocomplete}
                     size="small"
@@ -613,9 +613,9 @@ const Page = () => {
 
               {section.selectedProduct && (
                 <>
-                  <div className={styles.productRow}>
-                    <div className={styles.left}>
-                      <h4 className={styles.title}>
+                  <div className={styles.formRow}>
+                    <div className={styles.formColumn}>
+                      <h4 className={styles.itemTitle}>
                         {section.type + " Narxi"}
                       </h4>
                       <TextField
@@ -628,8 +628,8 @@ const Page = () => {
                         disabled
                       />
                     </div>
-                    <div className={styles.right}>
-                      <h4 className={styles.title}>Arenda olish miqdori</h4>
+                    <div className={styles.formColumn}>
+                      <h4 className={styles.itemTitle}>Arenda olish miqdori</h4>
                       <TextField
                         required
                         size="small"
@@ -645,9 +645,9 @@ const Page = () => {
                     </div>
                   </div>
 
-                  <div className={styles.productRow}>
-                    <div className={styles.left}>
-                      <h4 className={styles.title}>Arenda kunlik narxi</h4>
+                  <div className={styles.formRow}>
+                    <div className={styles.formColumn}>
+                      <h4 className={styles.itemTitle}>Arenda kunlik narxi</h4>
                       <TextField
                         required
                         size="small"
@@ -657,8 +657,8 @@ const Page = () => {
                         disabled
                       />
                     </div>
-                    <div className={styles.right}>
-                      <h4 className={styles.title}>Arenda boshlanishi</h4>
+                    <div className={styles.formColumn}>
+                      <h4 className={styles.itemTitle}>Arenda boshlanishi</h4>
                       <TextField
                         required
                         size="small"
@@ -673,9 +673,9 @@ const Page = () => {
                     </div>
                   </div>
 
-                  <div className={styles.productRow}>
-                    <div className={styles.left}>
-                      <h4 className={styles.title}>Arenda Umumiy narxi</h4>
+                  <div className={styles.formRow}>
+                    <div className={styles.formColumn}>
+                      <h4 className={styles.itemTitle}>Arenda Umumiy narxi</h4>
                       <TextField
                         required
                         size="small"
@@ -685,8 +685,8 @@ const Page = () => {
                         disabled
                       />
                     </div>
-                    <div className={styles.right}>
-                      <h4 className={styles.title}>Arenda tugashi</h4>
+                    <div className={styles.formColumn}>
+                      <h4 className={styles.itemTitle}>Arenda tugashi</h4>
                       <TextField
                         required
                         size="small"
@@ -701,8 +701,8 @@ const Page = () => {
                     </div>
                   </div>
 
-                  <div className={styles.productRow}>
-                    <div className={styles.left}>
+                  <div className={styles.formRow}>
+                    <div className={styles.formColumn}>
                       <FormControlLabel
                         control={
                           <Checkbox
@@ -718,9 +718,9 @@ const Page = () => {
                   </div>
 
                   {section.hasDiscount && (
-                    <div className={styles.productRow}>
-                      <div className={styles.left}>
-                        <h4 className={styles.title}>Chegirma narxi</h4>
+                    <div className={styles.formRow}>
+                      <div className={styles.formColumn}>
+                        <h4 className={styles.itemTitle}>Chegirma narxi</h4>
                         <TextField
                           required
                           size="small"
@@ -734,8 +734,10 @@ const Page = () => {
                           }}
                         />
                       </div>
-                      <div className={styles.right}>
-                        <h4 className={styles.title}>Chegirma bilan narx</h4>
+                      <div className={styles.formColumn}>
+                        <h4 className={styles.itemTitle}>
+                          Chegirma bilan narx
+                        </h4>
                         <TextField
                           size="small"
                           type="number"
@@ -747,9 +749,9 @@ const Page = () => {
                     </div>
                   )}
 
-                  <div className={styles.productRow}>
-                    <div className={styles.left}>
-                      <h4 className={styles.title}>Ishlatilmagan kunlar</h4>
+                  <div className={styles.formRow}>
+                    <div className={styles.formColumn}>
+                      <h4 className={styles.itemTitle}>Ishlatilmagan kunlar</h4>
                       <TextField
                         required
                         size="small"
@@ -764,8 +766,8 @@ const Page = () => {
                       />
                     </div>
 
-                    <div className={styles.right}>
-                      <h4 className={styles.title}>Izoh</h4>
+                    <div className={styles.formColumn}>
+                      <h4 className={styles.itemTitle}>Izoh</h4>
                       <TextField
                         required
                         size="small"
@@ -781,20 +783,17 @@ const Page = () => {
                 </>
               )}
 
-              <div className={styles.productRow}>
-                {index !== 0 ? (
+              <div className={styles.actionBtnContainer}>
+                {index !== 0 && (
                   <Button
-                    className={styles.del}
                     size="small"
                     variant="contained"
                     color="error"
                     onClick={() => handleRemoveSection(index)}
-                    style={{ marginLeft: "auto" }}
+                    className={styles.deleteButton}
                   >
                     <FaTrash size={19} />
                   </Button>
-                ) : (
-                  <div className={styles.none}></div>
                 )}
               </div>
             </div>
@@ -813,12 +812,12 @@ const Page = () => {
         <div className={styles.cars}>
           {delivery.map((el, i) => (
             <div key={i} className={styles.car}>
-              <h2 className={styles.numberOfProduct}>
-                {i + 1}-Mashina <FaCar size={19} />
+              <h2 className={styles.sectionTitle}>
+                <FaCar size={19} /> {i + 1}-Mashina
               </h2>
-              <div className={styles.carRow}>
-                <div className={styles.carLeft}>
-                  <h4 className={styles.title}>Mashina narxi</h4>
+              <div className={styles.formRow}>
+                <div className={styles.formColumn}>
+                  <h4 className={styles.itemTitle}>Mashina narxi</h4>
                   <TextField
                     required
                     size="small"
@@ -829,8 +828,8 @@ const Page = () => {
                   />
                 </div>
 
-                <div className={styles.carRight}>
-                  <h4 className={styles.title}>Izoh</h4>
+                <div className={styles.formColumn}>
+                  <h4 className={styles.itemTitle}>Izoh</h4>
                   <TextField
                     required
                     size="small"
@@ -843,19 +842,16 @@ const Page = () => {
                   />
                 </div>
               </div>
-              <div className={styles.carRow}>
-                {
-                  <Button
-                    className={styles.del}
-                    size="small"
-                    variant="contained"
-                    color="error"
-                    onClick={() => handleRemoveDelivery(i)}
-                    style={{ marginLeft: "auto" }}
-                  >
-                    <FaTrash size={19} />
-                  </Button>
-                }
+              <div className={styles.actionBtnContainer}>
+                <Button
+                  size="small"
+                  variant="contained"
+                  color="error"
+                  onClick={() => handleRemoveDelivery(i)}
+                  className={styles.deleteButton}
+                >
+                  <FaTrash size={19} />
+                </Button>
               </div>
             </div>
           ))}
@@ -870,7 +866,7 @@ const Page = () => {
           <FaPlus size={22} />
           <span>Mashina</span>
         </Button>
-        <div className={styles.btns}>
+        <div className={styles.buttonGroup}>
           <Button
             variant="contained"
             color="warning"
@@ -898,7 +894,7 @@ const Page = () => {
         </div>
 
         {isCheckVisible && (
-          <div ref={chackRef} className={styles.chechDiv}>
+          <div ref={chackRef} className={styles.checkPreview}>
             <UserDataSummary
               data={{
                 user_id: selectedUser?.id || "",

@@ -1,28 +1,43 @@
+// Variables for consistent styling
+$primary-color: #1976d2;
+$secondary-color: #f50057;
+$success-color: #4caf50;
+$warning-color: #ff9800;
+$error-color: #f44336;
+$border-color: #e0e0e0;
+$background-light: #ffffff;
+$background-gray: #f5f5f5;
+$box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+$border-radius: 8px;
+$spacing-sm: 8px;
+$spacing-md: 15px;
+$spacing-lg: 20px;
+$spacing-xl: 40px;
+$transition: all 0.3s ease;
+
+// Layout & Containers
+.wrapper {
+  padding-top: 70px;
+  width: 100%;
+}
 
 .row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
   position: fixed;
   top: 0;
   width: calc(100% - 80px);
-  background: #fff;
-  z-index: 2;
-  padding: 15px;
-  gap: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.autocomplete {
-  max-width: 300px;
-  width: 100%;
-  display: block;
-  margin-bottom: 15px;
+  background: $background-light;
+  z-index: 10;
+  padding: $spacing-md;
+  box-shadow: $box-shadow;
 }
 
 .content {
   margin-top: 80px;
+  max-width: 1400px;
+  padding: 0 $spacing-md;
   margin-left: auto;
   margin-right: auto;
 }
@@ -30,161 +45,211 @@
 .rowDiv {
   display: flex;
   flex-wrap: wrap;
-  width: 100%;
-  gap: 10px;
-  margin-bottom: 40px;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-xl;
 }
+
+// Section Cards
+.card {
+  background-color: $background-light;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  padding: $spacing-md;
+  transition: $transition;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
 .userSection {
-  border: 1px solid #e1e1e1;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  padding: 10px;
-  border-radius: 10px;
+  @extend .card;
   width: 100%;
   max-width: 300px;
   height: max-content;
-  background-color: #fff;
 }
+
 .product {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-
-  background-color: #fff;
-  padding: 10px;
-  border: 1px solid #ddd; 
-  border-radius: 10px;
-
+  @extend .card;
   width: 100%;
   max-width: 500px;
   height: max-content;
   flex: 1 1 auto;
 }
-.none {
-  margin-bottom: 27px;
+
+.car {
+  @extend .card;
+  max-width: 400px;
+  width: 100%;
 }
-.numberOfProduct {
+
+// Headers & Titles
+.sectionTitle {
   margin: 0;
-  margin-bottom: 10px;
+  margin-bottom: $spacing-md;
   font-size: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+
+  svg {
+    color: $primary-color;
+  }
 }
-.title {
+
+.itemTitle {
   margin: 0;
-  margin-bottom: 10px;
+  margin-bottom: $spacing-sm;
   padding: 0;
-  text-transform: capitalize;
-}
-
-.productRow {
-  display: flex;
-  justify-content: space-between;
-  gap: 15px; 
-  margin-bottom: 10px;
-}
-
-.left,
-.right {
-  width: 48%; 
-}
-
-.del {
-  height: max-content;
-}
-
-.selectedProductInfo {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  font-size: 14px;
+  font-weight: 500;
+  font-size: 16px;
   color: #555;
 }
 
-.productInput {
-  width: 100px;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  margin-right: 10px;
-}
-
-.productDateInput {
-  width: 150px;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  margin-right: 10px;
-}
-
-.productButton {
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-size: 14px;
-  margin-top: 10px;
-}
-
-.productButton:hover {
-  background-color: #0056b3;
-  color: white;
-}
-.car {
-  max-width: 400px;
-  background-color: #fff;
-  border: 1px solid #e1e1e1;
-  padding: 10px;
-  width: 100%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  border-radius: 10px;
-}
-.carRow {
+// Form Layouts
+.formRow {
   display: flex;
-  gap: 10px;
-  & + & {
-    margin-top: 10px;
+  justify-content: space-between;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+.formColumn {
+  width: 48%;
+  display: flex;
+  flex-direction: column;
+}
+
+// Form Components
+.autocomplete {
+  width: 100%;
+  margin-bottom: $spacing-md;
+}
+
+.dateInput {
+  width: 100%;
+}
+
+.userDetails {
+  margin-top: $spacing-md;
+  padding: $spacing-md;
+  background-color: $background-gray;
+  border-radius: $border-radius;
+  border-left: 3px solid $primary-color;
+
+  h5 {
+    margin: 0 0 $spacing-sm 0;
+    color: #555;
+  }
+
+  p {
+    margin: $spacing-sm 0;
+    font-size: 14px;
   }
 }
+
+// Collections
 .cars {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
-  margin-top: 30px;
-  
+  gap: $spacing-md;
+  margin: $spacing-xl 0;
 }
-.carLeft {
-  width: 50%;
-}
-.carRight {
-  width: 50%;
-}
+
+// Buttons & Actions
 .btnWithIcon {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-sm;
 }
-.btns {
+
+.actionBtn {
+  align-self: flex-end;
+}
+
+.actionBtnContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: $spacing-sm;
+}
+
+.buttonGroup {
   display: flex;
   width: 100%;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 100px;
+  justify-content: flex-end;
+  gap: $spacing-md;
+  margin: $spacing-xl 0;
 }
-.chechDiv {
-  padding: 10px;
+
+// Print Preview
+.checkPreview {
+  padding: $spacing-md;
+  background-color: $background-light;
+  border: 1px solid $border-color;
+}
+
+// Spacing utility
+.spacer {
+  margin-bottom: $spacing-xl;
+}
+
+// Remove button
+.deleteButton {
+  margin-left: auto;
+}
+
+// Responsive styles
+@media (max-width: 992px) {
+  .rowDiv {
+    justify-content: center;
+  }
+
+  .userSection,
+  .product {
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 768px) {
   .content {
-    padding-left: 5%;
-    padding-right: 5%;
+    padding: 0 $spacing-sm;
   }
 
-  .productRow {
+  .formRow {
     flex-direction: column;
-    align-items: flex-start;
   }
 
-  .left,
-  .right {
+  .formColumn {
     width: 100%;
-    max-width: none;
+  }
+
+  .car {
+    max-width: 100%;
+  }
+
+  .buttonGroup {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btnWithIcon {
+    margin-left: 0 !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .row {
+    padding: $spacing-sm;
+    width: calc(100% - 60px);
+  }
+
+  .content {
+    margin-top: 70px;
+  }
+
+  .sectionTitle {
+    font-size: 18px;
   }
 }
