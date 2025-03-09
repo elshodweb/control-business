@@ -72,15 +72,16 @@ $transition: all 0.3s ease;
 .product {
   @extend .card;
   width: 100%;
-  max-width: 500px;
+  max-width: 100%;
   height: max-content;
   flex: 1 1 auto;
 }
 
 .car {
   @extend .card;
-  max-width: 400px;
+  max-width: 100%;
   width: 100%;
+  margin-bottom: $spacing-md;
 }
 
 // Headers & Titles
@@ -110,15 +111,15 @@ $transition: all 0.3s ease;
 // Form Layouts
 .formRow {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
   gap: $spacing-md;
   margin-bottom: $spacing-md;
+  width: 100%;
 }
 
 .formColumn {
-  width: 48%;
-  display: flex;
-  flex-direction: column;
+  flex: 1 1 300px;
+  min-width: 250px;
 }
 
 // Form Components
@@ -152,7 +153,8 @@ $transition: all 0.3s ease;
 // Collections
 .cars {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  width: 100%;
   gap: $spacing-md;
   margin: $spacing-xl 0;
 }
@@ -163,6 +165,7 @@ $transition: all 0.3s ease;
   align-items: center;
   gap: $spacing-sm;
   margin-bottom: $spacing-sm;
+  margin-left: $spacing-sm;
 }
 
 .actionBtn {
@@ -180,7 +183,7 @@ $transition: all 0.3s ease;
   width: 100%;
   justify-content: flex-end;
   gap: $spacing-md;
-  margin: $spacing-xl 0;
+  margin-top: $spacing-xl;
 }
 
 // Print Preview
@@ -236,6 +239,10 @@ $transition: all 0.3s ease;
 
   .btnWithIcon {
     margin-left: 0 !important;
+  }
+
+  .userSection {
+    max-width: 100%;
   }
 }
 

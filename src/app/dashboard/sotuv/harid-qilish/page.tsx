@@ -542,6 +542,8 @@ const Page = () => {
               <h2 className={styles.sectionTitle}>
                 <FaBox size={19} /> {index + 1}-Mahsulot
               </h2>
+
+              {/* Category and Product Selection Row */}
               <div className={styles.formRow}>
                 <div className={styles.formColumn}>
                   <h4 className={styles.itemTitle}>Mahsulot kategoriyasini</h4>
@@ -613,6 +615,7 @@ const Page = () => {
 
               {section.selectedProduct && (
                 <>
+                  {/* Price and Quantity Row */}
                   <div className={styles.formRow}>
                     <div className={styles.formColumn}>
                       <h4 className={styles.itemTitle}>
@@ -626,6 +629,7 @@ const Page = () => {
                         variant="outlined"
                         value={section.price}
                         disabled
+                        fullWidth
                       />
                     </div>
                     <div className={styles.formColumn}>
@@ -641,11 +645,9 @@ const Page = () => {
                             handleQuantityChange(index, +e.target.value);
                           }
                         }}
+                        fullWidth
                       />
                     </div>
-                  </div>
-
-                  <div className={styles.formRow}>
                     <div className={styles.formColumn}>
                       <h4 className={styles.itemTitle}>Arenda kunlik narxi</h4>
                       <TextField
@@ -655,8 +657,13 @@ const Page = () => {
                         variant="outlined"
                         value={sections[index].dailyPrice}
                         disabled
+                        fullWidth
                       />
                     </div>
+                  </div>
+
+                  {/* Date Selection Row */}
+                  <div className={styles.formRow}>
                     <div className={styles.formColumn}>
                       <h4 className={styles.itemTitle}>Arenda boshlanishi</h4>
                       <TextField
@@ -669,20 +676,7 @@ const Page = () => {
                         onChange={(e) =>
                           handleStartDateChange(index, e.target.value)
                         }
-                      />
-                    </div>
-                  </div>
-
-                  <div className={styles.formRow}>
-                    <div className={styles.formColumn}>
-                      <h4 className={styles.itemTitle}>Arenda Umumiy narxi</h4>
-                      <TextField
-                        required
-                        size="small"
-                        type="number"
-                        variant="outlined"
-                        value={sections[index].totalPrice}
-                        disabled
+                        fullWidth
                       />
                     </div>
                     <div className={styles.formColumn}>
@@ -697,10 +691,24 @@ const Page = () => {
                         onChange={(e) =>
                           handleEndDateChange(index, e.target.value)
                         }
+                        fullWidth
+                      />
+                    </div>
+                    <div className={styles.formColumn}>
+                      <h4 className={styles.itemTitle}>Arenda Umumiy narxi</h4>
+                      <TextField
+                        required
+                        size="small"
+                        type="number"
+                        variant="outlined"
+                        value={sections[index].totalPrice}
+                        disabled
+                        fullWidth
                       />
                     </div>
                   </div>
 
+                  {/* Discount Row */}
                   <div className={styles.formRow}>
                     <div className={styles.formColumn}>
                       <FormControlLabel
@@ -732,6 +740,7 @@ const Page = () => {
                               handleDiscountPriceChange(index, +e.target.value);
                             }
                           }}
+                          fullWidth
                         />
                       </div>
                       <div className={styles.formColumn}>
@@ -744,11 +753,13 @@ const Page = () => {
                           variant="outlined"
                           value={section.totalPrice}
                           disabled
+                          fullWidth
                         />
                       </div>
                     </div>
                   )}
 
+                  {/* Unused Days and Comment Row */}
                   <div className={styles.formRow}>
                     <div className={styles.formColumn}>
                       <h4 className={styles.itemTitle}>Ishlatilmagan kunlar</h4>
@@ -763,9 +774,9 @@ const Page = () => {
                             updateUnusedDays(index, section, +e.target.value);
                           }
                         }}
+                        fullWidth
                       />
                     </div>
-
                     <div className={styles.formColumn}>
                       <h4 className={styles.itemTitle}>Izoh</h4>
                       <TextField
@@ -777,6 +788,7 @@ const Page = () => {
                         onChange={(e) =>
                           handleCommentChange(index, e.target.value)
                         }
+                        fullWidth
                       />
                     </div>
                   </div>
