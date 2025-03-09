@@ -837,6 +837,7 @@ const Page = () => {
                     label="Narhi"
                     value={el.price}
                     onChange={(e) => changeDelivery(i, "price", e.target.value)}
+                    fullWidth
                   />
                 </div>
 
@@ -851,6 +852,7 @@ const Page = () => {
                     onChange={(e) =>
                       changeDelivery(i, "comment", e.target.value)
                     }
+                    fullWidth
                   />
                 </div>
               </div>
