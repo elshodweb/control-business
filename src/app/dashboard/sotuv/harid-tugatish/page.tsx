@@ -46,7 +46,7 @@ const OrderPage = () => {
   );
 
   const [pageSize, setPageSize] = useState(10);
-  
+
   const [isActive, setIsActive] = useState<boolean | undefined>(undefined);
   const [startDate, setStartDate] = useState<string | undefined>(undefined);
   const [endDate, setEndDate] = useState<string | undefined>(undefined);
@@ -259,12 +259,140 @@ const OrderPage = () => {
             isOpen={isConfirmDeleteOpen}
             onClose={() => setIsConfirmDeleteOpen(false)}
             title="Haridni yakunlash"
+            className={styles.modal}
           >
+            {selectedOrder && (
+              <div className={styles.orderSummary}>
+                <div className={styles.orderInfo}>
+                  <h4 className={styles.sectionTitle}>Buyurtma ma'lumotlari</h4>
+                  <div className={styles.orderInfoRow}>
+                    <span className={styles.label}>Mijoz:</span>
+                    <span className={styles.value}>
+                      {selectedOrder.user_id
+                        ? `${selectedOrder.user_id.name || ""} ${
+                            selectedOrder.user_id.first_name || ""
+                          }`
+                        : "Noma'lum"}
+                    </span>
+                  </div>
+                  <div className={styles.orderInfoRow}>
+                    <span className={styles.label}>Telefon:</span>
+                    <span className={styles.value}>
+                      {selectedOrder.user_id?.phone || "Noma'lum"}
+                    </span>
+                  </div>
+                  <div className={styles.orderInfoRow}>
+                    <span className={styles.label}>Umumiy narx:</span>
+                    <span className={styles.value}>
+                      {Number(selectedOrder.total_price).toLocaleString()} so'm
+                    </span>
+                  </div>
+                  <div className={styles.orderInfoRow}>
+                    <span className={styles.label}>Kunlik narx:</span>
+                    <span className={styles.value}>
+                      {Number(selectedOrder.daily_price).toLocaleString()} so'm
+                    </span>
+                  </div>
+                  <div className={styles.orderInfoRow}>
+                    <span className={styles.label}>Buyurtma sanasi:</span>
+                    <span className={styles.value}>
+                      {new Date(selectedOrder.create_data).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <div className={styles.orderInfoRow}>
+                    <span className={styles.label}>Izoh:</span>
+                    <span className={styles.value}>
+                      {selectedOrder.comment || "-"}
+                    </span>
+                  </div>
+                </div>
+
+                {selectedOrder.orderProducts &&
+                  selectedOrder.orderProducts.length > 0 && (
+                    <div className={styles.productsSection}>
+                      <h4 className={styles.sectionTitle}>Mahsulotlar</h4>
+                      {selectedOrder.orderProducts.map(
+                        (product: any, index: number) => (
+                          <div key={product.id} className={styles.productItem}>
+                            <div className={styles.productInfoRow}>
+                              <span className={styles.label}>Mahsulot:</span>
+                              <span className={styles.value}>
+                                {product.product_id?.title || "Noma'lum"}
+                              </span>
+                            </div>
+                            <div className={styles.productInfoRow}>
+                              <span className={styles.label}>Miqdor:</span>
+                              <span className={styles.value}>
+                                {product.quantity_sold}
+                              </span>
+                            </div>
+                            <div className={styles.productInfoRow}>
+                              <span className={styles.label}>O'lchov:</span>
+                              <span className={styles.value}>
+                                {product.measurement_sold}
+                              </span>
+                            </div>
+                            <div className={styles.productInfoRow}>
+                              <span className={styles.label}>Kunlik narx:</span>
+                              <span className={styles.value}>
+                                {Number(product.price_per_day).toLocaleString()}{" "}
+                                so'm
+                              </span>
+                            </div>
+                            <div className={styles.productInfoRow}>
+                              <span className={styles.label}>
+                                Boshlanish sanasi:
+                              </span>
+                              <span className={styles.value}>
+                                {product.given_date}
+                              </span>
+                            </div>
+                            <div className={styles.productInfoRow}>
+                              <span className={styles.label}>
+                                Tugash sanasi:
+                              </span>
+                              <span className={styles.value}>
+                                {product.end_date}
+                              </span>
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  )}
+
+                {selectedOrder.carServices &&
+                  selectedOrder.carServices.length > 0 && (
+                    <div className={styles.servicesSection}>
+                      <h4 className={styles.sectionTitle}>Xizmatlar</h4>
+                      {selectedOrder.carServices.map(
+                        (service: any, index: number) => (
+                          <div key={service.id} className={styles.serviceItem}>
+                            <div className={styles.serviceInfoRow}>
+                              <span className={styles.label}>Narx:</span>
+                              <span className={styles.value}>
+                                {service.price}
+                              </span>
+                            </div>
+                            <div className={styles.serviceInfoRow}>
+                              <span className={styles.label}>Izoh:</span>
+                              <span className={styles.value}>
+                                {service.comment || "-"}
+                              </span>
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  )}
+              </div>
+            )}
+
             <p>Haqiqatan ham ushbu haridni yakunlashni istaysizmi?</p>
-            <label>
-              <Checkbox onChange={() => setIsDebt(!isDebt)} value={isDebt} />
-              Qarz qoldirish
-            </label>
+            <div className={styles.debtCheckbox}>
+              <Checkbox onChange={() => setIsDebt(!isDebt)} checked={isDebt} />
+              <span>Qarz qoldirish</span>
+            </div>
 
             {isDebt && (
               <div className={styles.debt}>
@@ -273,7 +401,8 @@ const OrderPage = () => {
                   className={styles.input}
                   fullWidth={true}
                   type="number"
-                  value={debt.remaining_debt}
+                  size="small"
+                  value={debt.remaining_debt || ""}
                   onChange={(e) =>
                     setDebt({ ...debt, remaining_debt: e.target.value })
                   }
@@ -283,7 +412,8 @@ const OrderPage = () => {
                   className={styles.input}
                   fullWidth={true}
                   type="date"
-                  value={debt.dayToBeGiven}
+                  size="small"
+                  value={debt.dayToBeGiven || ""}
                   onChange={(e) =>
                     setDebt({ ...debt, dayToBeGiven: e.target.value })
                   }
@@ -293,7 +423,8 @@ const OrderPage = () => {
                   className={styles.input}
                   fullWidth={true}
                   type="date"
-                  value={debt.dayGiven}
+                  size="small"
+                  value={debt.dayGiven || ""}
                   onChange={(e) =>
                     setDebt({ ...debt, dayGiven: e.target.value })
                   }
@@ -303,15 +434,27 @@ const OrderPage = () => {
                   className={styles.input}
                   fullWidth={true}
                   type="text"
-                  value={debt.comment}
+                  size="small"
+                  multiline
+                  rows={2}
+                  value={debt.comment || ""}
                   onChange={(e) =>
                     setDebt({ ...debt, comment: e.target.value })
                   }
                 />
               </div>
             )}
-            <button onClick={handleDelete}>Ha</button>
-            <button onClick={() => setIsConfirmDeleteOpen(false)}>Yo'q</button>
+            <div className={styles.modalActions}>
+              <button className={styles.button} onClick={handleDelete}>
+                Ha
+              </button>
+              <button
+                className={styles.button}
+                onClick={() => setIsConfirmDeleteOpen(false)}
+              >
+                Yo'q
+              </button>
+            </div>
           </Modal>
 
           <MyPagination

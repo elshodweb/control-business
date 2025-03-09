@@ -10,6 +10,7 @@ interface Order {
   data_sequence: string;
   update_date: string;
   create_data: string;
+  comment: string;
 }
 
 interface Pagination {

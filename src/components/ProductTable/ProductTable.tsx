@@ -27,7 +27,6 @@ const ProductTable: FC<ProductTableProps> = ({
     if (row?.id) {
       const response = await axiosInstance.get("/product/one/" + row.id);
       setSelectedObject(response.data);
-      console.log(response.data);
     }
 
     setIsModalOpen(true);

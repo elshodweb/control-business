@@ -120,14 +120,33 @@ const OrderStatisticsPage = () => {
       </div>
       <p>Jami to‘langan: {} so'm</p>
       <div>
-        <h3>Buyurtmalar ro‘yxati</h3>
+        <h3>Buyurtmalar ro'yxati</h3>
         <TableStatistics
-          keys={["total_price", "daily_price", "paid_total", "IsActive"]}
-          titles={["Jami narx", "Kunlik narx", "To‘langan summa", "Faol holat"]}
+          keys={[
+            "total_price",
+            "daily_price",
+            "paid_total",
+            "IsActive",
+            "create_data",
+            "comment",
+          ]}
+          titles={[
+            "Jami narx",
+            "Kunlik narx",
+            "To'langan summa",
+            "Faol holat",
+            "Yaratilgan sana",
+            "Izoh",
+          ]}
           data={orders.map((order) => ({
             ...order,
+            id: order.id.substring(0, 8) + "...", // Show shortened ID for better display
             IsActive: order.IsActive === "1" ? "Faol" : "Faol emas",
-            total_price: order.total_price ?? "N/A",
+            total_price: Number(order.total_price).toLocaleString() + " so'm",
+            daily_price: Number(order.daily_price).toLocaleString() + " so'm",
+            paid_total: Number(order.paid_total).toLocaleString() + " so'm",
+            create_data: new Date(order.create_data).toLocaleDateString(),
+            comment: order?.comment || "-",
           }))}
         />
         <MyPagination

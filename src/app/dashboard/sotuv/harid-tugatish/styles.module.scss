@@ -61,6 +61,191 @@
 .input {
   display: block;
 }
+.modal  {
+  max-height: 90vh; // Ensure it doesn't get too tall
+  overflow-y: auto;
+  width: 80% !important; // Changed from fixed pixels to percentage
+  max-width: 1200px !important; // Add a max-width for very large screens
+  padding: 25px;
+}
+
+// Update the order summary container styles
+.orderSummary {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  border-left: 4px solid #2196f3;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: space-between;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .orderSummary {
+    grid-template-columns: 1fr 1fr; // Two columns for larger screens
+    gap: 20px;
+  }
+}
+
+// Update the orderInfo, productsSection, and servicesSection
+.orderInfo,
+.productsSection,
+.servicesSection {
+  flex: 1 1 300px;
+  margin-bottom: 15px;
+  max-height: max-content;
+}
+
+// Update the orderInfo container
+.orderInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.orderInfoRow,
+.productInfoRow,
+.serviceInfoRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-bottom: 1px dashed #e0e0e0;
+}
+
+.label {
+  font-weight: 600;
+  color: #555;
+}
+
+.value {
+  color: #333;
+  font-weight: 500;
+}
+
+// Update section title
+.sectionTitle {
+  margin: 10px 0 15px 0;
+  padding-bottom: 5px;
+  border-bottom: 2px solid #2196f3;
+  color: #2196f3;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.orderInfo,
+.productsSection,
+.servicesSection {
+  min-width: 300px; // Make these sections span all columns
+}
+.orderInfo,
+.productItem,
+.serviceItem {
+  padding: 10px;
+  border-radius: 6px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+// Update the productItem and serviceItem styles
+.productItem,
+.serviceItem {
+  padding: 12px;
+  border-radius: 6px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+}
+
+// For action buttons at the bottom
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  gap: 10px;
+  width: 100%;
+}
+
+// Fix buttons styles
+.button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  margin-top: 10px;
+  min-width: 80px;
+
+  &:first-of-type {
+    background-color: #2196f3;
+    color: white;
+  }
+
+  &:last-of-type {
+    background-color: #f44336;
+    color: white;
+    margin-left: 10px;
+  }
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+// Fix debt form section
+.debt {
+  margin: 15px auto;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  border-left: 4px solid #ff9800;
+  width: 90%;
+  max-width: 500px; // Add maximum width to control the size
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+  }
+
+  .input {
+    margin-bottom: 15px;
+  }
+}
+
+// Add responsive styles for smaller screens
+@media (max-width: 768px) {
+  .orderSummary {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .orderInfo,
+  .productsSection,
+  .servicesSection {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .productItem,
+  .serviceItem {
+    margin-bottom: 10px;
+  }
+
+  // Keep buttons visible at bottom of modal
+  .modalActions {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding: 10px 0;
+    margin-top: 10px;
+  }
+}
+
 @media (max-width: 530px) {
   .row {
     flex-wrap: wrap;
@@ -73,5 +258,12 @@
 
   .wrapper {
     padding-top: 100px;
+  }
+}
+
+@media (max-width: 600px) {
+  .debt {
+    width: 100%;
+    padding: 12px;
   }
 }
