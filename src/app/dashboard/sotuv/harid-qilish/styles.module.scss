@@ -135,6 +135,32 @@ $transition: all 0.3s ease;
 }
 
 .userDetails {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background-color: #e8f5e9;
+  border-radius: 8px;
+  border-left: 4px solid #4caf50;
+
+  h5 {
+    margin: 0 0 8px 0;
+    font-size: 17px;
+    color: #2e7d32;
+  }
+
+  p {
+    margin: 4px 0;
+    font-size: 14px;
+  }
+
+  .userActions {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.userDetails {
   margin-top: $spacing-md;
   padding: $spacing-md;
   background-color: $background-gray;
@@ -274,5 +300,27 @@ $transition: all 0.3s ease;
   .formColumn {
     flex: 1 1 250px;
     min-width: 250px;
+  }
+}
+
+.userSelectionContainer {
+  margin: 12px 0;
+  width: 100%;
+}
+
+.noUserSelected {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  margin-bottom: 16px;
+
+  p {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    color: #666;
   }
 }

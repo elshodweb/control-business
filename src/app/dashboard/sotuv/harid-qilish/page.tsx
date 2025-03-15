@@ -499,42 +499,37 @@ const Page = () => {
               autoComplete="username"
             />
 
-            <Autocomplete
-              className={styles.autocomplete}
-              id="user-selection-autocomplete"
-              size="small"
-              options={users}
-              onChange={(event, value) => setSelectedUser(value)}
-              getOptionLabel={(option: any) =>
-                `${option.name || "Без имени"} (${
-                  option.phone || "Нет телефона"
-                })`
-              }
-              value={selectedUser}
-              isOptionEqualToValue={(option, value) =>
-                option.phone === value.phone
-              }
-              autoComplete={false}
-              renderInput={(params) => (
-                <TextField
-                  required
-                  {...params}
-                  size="small"
-                  label="Telefon nomer"
-                  variant="outlined"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                />
+            <div className={styles.userSelectionContainer}>
+              {!selectedUser ? (
+                // Show this content when no user is selected
+                <div className={styles.noUserSelected}>
+                  <p>Foydalanuvchi tanlanmagan</p>
+                  <UserModalForm getIdUser={setUser} />
+                </div>
+              ) : (
+                // Show this content when a user is selected
+                <div className={styles.userDetails}>
+                  <div>
+                    <h5>Tanlangan foydalanuvchi</h5>
+                    <p>Ism: {selectedUser.name}</p>
+                    <p>Telefon: {selectedUser.phone}</p>
+                    {selectedUser.comment && (
+                      <p>Izoh: {selectedUser.comment}</p>
+                    )}
+                  </div>
+                  <div className={styles.userActions}>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      onClick={() => setSelectedUser(null)}
+                      size="small"
+                    >
+                      O'zgartirish
+                    </Button>
+                  </div>
+                </div>
               )}
-            />
-            {selectedUser && (
-              <div className={styles.userDetails}>
-                <h5>Tanlangan foydalanuvchi</h5>
-                <p>Ism: {selectedUser.name}</p>
-                <p>Telefon: {selectedUser.phone}</p>
-              </div>
-            )}
-            <UserModalForm getIdUser={setUser}></UserModalForm>
+            </div>
           </div>
 
           {sections.map((section, index) => (

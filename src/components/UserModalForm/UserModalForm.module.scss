@@ -67,6 +67,44 @@
   margin-bottom: 20px !important;
 }
 
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .userSelectSection,
+  .createUserSection {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+    background-color: #f9f9f9;
+  }
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 18px;
+    color: #444;
+  }
+}
+
+.userSelectButton {
+  margin-top: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+@media (min-width: 768px) {
+  .modalContent {
+    flex-direction: row;
+
+    .userSelectSection,
+    .createUserSection {
+      flex: 1;
+    }
+  }
+}
+
 @media (max-width: 700px) {
   .row {
     flex-wrap: nowrap;

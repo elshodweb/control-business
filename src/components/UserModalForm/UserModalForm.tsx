@@ -1,26 +1,59 @@
 "use client";
-import { Alert, Snackbar, TextField } from "@mui/material";
 import React, { useState } from "react";
-import Modal from "../Modal/Modal";
-import axiosInstance from "@/utils/axiosInstance";
+import {
+  Modal,
+  Box,
+  Button,
+  Autocomplete,
+  TextField,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import styles from "./UserModalForm.module.scss";
-const UserModalForm: React.FC<{ getIdUser: (id: string) => void }> = ({
-  getIdUser,
-}) => {
-  const [userData, setSelectedUser] = useState<any>(null);
-  const [avatar, setAvatar] = useState<File | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { FaPlus, FaUserPlus } from "react-icons/fa";
+import axiosInstance from "@/utils/axiosInstance";
 
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 500,
+  bgcolor: "background.paper",
+  border: "0px solid #000",
+  borderRadius: "8px",
+  boxShadow: 24,
+  p: 4,
+};
+
+interface UserModalFormProps {
+  getIdUser: (id: string) => void;
+}
+
+const UserModalForm: React.FC<UserModalFormProps> = ({ getIdUser }) => {
+  const [open, setOpen] = useState(false);
+  const [newUser, setNewUser] = useState({
+    name: "",
+    phone: "",
+    comment: "",
+  });
+  const { users } = useSelector((state: RootState) => state.users);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [avatar, setAvatar] = useState<File | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
     "success"
   );
+
   const showSnackbar = (message: string, severity: "success" | "error") => {
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
   };
+
   const handleSnackbarClose = (
     event?: React.SyntheticEvent | Event,
     reason?: string
@@ -30,17 +63,22 @@ const UserModalForm: React.FC<{ getIdUser: (id: string) => void }> = ({
     }
     setSnackbarOpen(false);
   };
-  const handleFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
 
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const handleSelectUser = () => {
+    if (selectedUser) {
+      getIdUser(selectedUser.id);
+      handleClose();
+    }
+  };
+
+  const handleCreateUser = async () => {
     const formData = new FormData();
-    formData.append("first_name", userData?.first_name || "");
-    formData.append("name", userData?.name || "");
-    formData.append("last_name", userData?.last_name || "");
-    formData.append("comment", userData?.comment || "");
-    formData.append("phone", userData?.phone || "");
-    formData.append("role", userData?.role || "");
-    formData.append("password", userData?.password || "");
+    formData.append("name", newUser.name);
+    formData.append("phone", newUser.phone);
+    formData.append("comment", newUser.comment);
 
     if (avatar) {
       formData.append("image", avatar);
@@ -52,14 +90,14 @@ const UserModalForm: React.FC<{ getIdUser: (id: string) => void }> = ({
         url: "/Auth/user/register",
         data: formData,
         headers: {
-          "Content-Type": "multipart/form-data", // Указываем правильный тип контента
+          "Content-Type": "multipart/form-data",
         },
       });
 
       if (response.status < 300) {
-        setIsModalOpen(false);
         showSnackbar("Foydalanuvchi muvaffaqiyatli qo'shildi", "success");
         getIdUser(response?.data?.user?.id);
+        handleClose();
       } else {
         showSnackbar("Foydalanuvchini saqlashda xato", "error");
       }
@@ -67,11 +105,18 @@ const UserModalForm: React.FC<{ getIdUser: (id: string) => void }> = ({
       showSnackbar("Foydalanuvchini saqlashda xatolik yuz berdi", "error");
     }
   };
+
   return (
     <>
-      <button type="button" className={styles.addBtn} onClick={() => setIsModalOpen(true)}>
-        Foydalanuvchi yaratish
-      </button>
+      <Button
+        onClick={handleOpen}
+        variant="contained"
+        color="primary"
+        className={styles.userSelectButton}
+      >
+        <FaUserPlus size={18} style={{ marginRight: "8px" }} />
+        Foydalanuvchi
+      </Button>
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
@@ -82,121 +127,105 @@ const UserModalForm: React.FC<{ getIdUser: (id: string) => void }> = ({
         </Alert>
       </Snackbar>
       <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title={"Foydalanuvchi yaratish"}
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="user-modal-title"
+        aria-describedby="user-modal-description"
       >
-        <div className={styles.form}>
-          <TextField
-            autoComplete="off"
-            className={styles.autocompleteModal}
-            size="small"
-            label="Familiya"
-            fullWidth
-            value={userData?.first_name || ""}
-            onChange={(e) =>
-              setSelectedUser({
-                ...userData,
-                first_name: e.target.value,
-              })
-            }
-            required
-          />
-          <TextField
-            autoComplete="off"
-            className={styles.autocompleteModal}
-            size="small"
-            label="Ism"
-            fullWidth
-            value={userData?.name || ""}
-            onChange={(e) =>
-              setSelectedUser({
-                ...userData,
-                name: e.target.value,
-              })
-            }
-            required
-          />
-          <TextField
-            autoComplete="off"
-            className={styles.autocompleteModal}
-            size="small"
-            label="Otasini ismi"
-            fullWidth
-            value={userData?.last_name || ""}
-            onChange={(e) =>
-              setSelectedUser({
-                ...userData,
-                last_name: e.target.value,
-              })
-            }
-            required
-          />
-          <TextField
-            autoComplete="off"
-            className={styles.autocompleteModal}
-            size="small"
-            label="Izoh"
-            fullWidth
-            value={userData?.comment || ""}
-            onChange={(e) =>
-              setSelectedUser({ ...userData, comment: e.target.value })
-            }
-            required
-          />
-          <TextField
-            autoComplete="off"
-            className={styles.autocompleteModal}
-            size="small"
-            label="Telefon"
-            fullWidth
-            value={userData?.phone || ""}
-            onChange={(e) =>
-              setSelectedUser({ ...userData, phone: e.target.value })
-            }
-            required
-          />
-          <TextField
-            autoComplete="off"
-            className={styles.autocompleteModal}
-            size="small"
-            label="Rol"
-            fullWidth
-            value={userData?.role || ""}
-            onChange={(e) =>
-              setSelectedUser({ ...userData, role: e.target.value })
-            }
-            required
-          />
-          <TextField
-            autoComplete="off"
-            className={styles.autocompleteModal}
-            size="small"
-            label="Parol"
-            fullWidth
-            type="password"
-            value={userData?.password || ""}
-            onChange={(e) =>
-              setSelectedUser({ ...userData, password: e.target.value })
-            }
-            required
-          />
-          <TextField
-            autoComplete="off"
-            className={styles.autocompleteModal}
-            size="small"
-            fullWidth
-            type="file"
-            onChange={(e: any) => {
-              const file = e.target.files?.[0];
-              if (file) {
-                setAvatar(file);
-              }
-            }}
-          />
+        <Box sx={style}>
+          <h2 id="user-modal-title">Foydalanuvchi tanlash</h2>
+          <div className={styles.modalContent}>
+            <div className={styles.userSelectSection}>
+              <h3>Mavjud foydalanuvchilar</h3>
+              <Autocomplete
+                id="user-select-dropdown"
+                options={users}
+                getOptionLabel={(option: any) =>
+                  `${option.name || "Без имени"} (${
+                    option.phone || "Нет телефона"
+                  })`
+                }
+                onChange={(event, value) => setSelectedUser(value)}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Foydalanuvchi"
+                    variant="outlined"
+                  />
+                )}
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSelectUser}
+                fullWidth
+                disabled={!selectedUser}
+                sx={{ mt: 2 }}
+              >
+                Tanlash
+              </Button>
+            </div>
 
-          <button type="button" onClick={handleFormSubmit}>Saqlash</button>
-        </div>
+            <div className={styles.createUserSection}>
+              <h3>Yangi foydalanuvchi</h3>
+              <TextField
+                label="Ism"
+                variant="outlined"
+                fullWidth
+                margin="dense"
+                value={newUser.name}
+                onChange={(e) =>
+                  setNewUser({ ...newUser, name: e.target.value })
+                }
+              />
+              <TextField
+                label="Telefon"
+                variant="outlined"
+                fullWidth
+                margin="dense"
+                value={newUser.phone}
+                onChange={(e) =>
+                  setNewUser({ ...newUser, phone: e.target.value })
+                }
+              />
+              <TextField
+                label="Izoh"
+                variant="outlined"
+                fullWidth
+                margin="dense"
+                multiline
+                rows={2}
+                value={newUser.comment}
+                onChange={(e) =>
+                  setNewUser({ ...newUser, comment: e.target.value })
+                }
+              />
+              <TextField
+                autoComplete="off"
+                className={styles.autocompleteModal}
+                size="small"
+                fullWidth
+                type="file"
+                onChange={(e: any) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    setAvatar(file);
+                  }
+                }}
+              />
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleCreateUser}
+                fullWidth
+                sx={{ mt: 2 }}
+              >
+                <FaPlus size={16} style={{ marginRight: "8px" }} />
+                Yaratish
+              </Button>
+            </div>
+          </div>
+        </Box>
       </Modal>
     </>
   );
