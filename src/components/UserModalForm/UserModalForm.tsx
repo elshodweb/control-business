@@ -14,16 +14,18 @@ import {
   MenuItem,
 } from "@mui/material";
 import styles from "./UserModalForm.module.scss";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store/store";
 import { FaPlus, FaUserPlus } from "react-icons/fa";
 import axiosInstance from "@/utils/axiosInstance";
+import { fetchUsers } from "@/features/users/users";
 
 interface UserModalFormProps {
   getIdUser: (id: string) => void;
 }
 
 const UserModalForm: React.FC<UserModalFormProps> = ({ getIdUser }) => {
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [newUser, setNewUser] = useState({
     first_name: "",
@@ -31,10 +33,11 @@ const UserModalForm: React.FC<UserModalFormProps> = ({ getIdUser }) => {
     name: "",
     phone: "",
     comment: "",
-    role: "user", // Default role
-    password: "", // Required password
+    role: "user",
+    password: "",
   });
   const { users } = useSelector((state: RootState) => state.users);
+  const [allUsers, setAllUsers] = useState<any[]>([]);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [avatar, setAvatar] = useState<File | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -44,19 +47,34 @@ const UserModalForm: React.FC<UserModalFormProps> = ({ getIdUser }) => {
   );
   const [isMobile, setIsMobile] = useState(false);
 
-  // Ekran o'lchamini kuzatish uchun useEffect hook
+  useEffect(() => {
+    if (users && users.length > 0) {
+      setAllUsers(users);
+    }
+  }, [users]);
+
+  const handleOpen = () => {
+    setOpen(true);
+    setSelectedUser(null);
+
+    dispatch(
+      fetchUsers({
+        pageNumber: 1,
+        pageSize: 200,
+        search: "",
+      }) as any
+    );
+  };
+
   useEffect(() => {
     const checkIsMobile = () => {
       setIsMobile(window.innerWidth < 600);
     };
 
-    // Dastlabki o'lchamni aniqlash
     checkIsMobile();
 
-    // Ekran o'lchami o'zgarishini kuzatish
     window.addEventListener("resize", checkIsMobile);
 
-    // Cleanup
     return () => {
       window.removeEventListener("resize", checkIsMobile);
     };
@@ -78,8 +96,10 @@ const UserModalForm: React.FC<UserModalFormProps> = ({ getIdUser }) => {
     setSnackbarOpen(false);
   };
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedUser(null);
+  };
 
   const handleSelectUser = () => {
     if (selectedUser) {
@@ -89,7 +109,6 @@ const UserModalForm: React.FC<UserModalFormProps> = ({ getIdUser }) => {
   };
 
   const handleCreateUser = async () => {
-    // API talab qilgan to'liq name fieldini yangilaymiz
     const updatedUser = {
       ...newUser,
       name: `${newUser.first_name} ${newUser.last_name}`.trim(),
@@ -120,10 +139,18 @@ const UserModalForm: React.FC<UserModalFormProps> = ({ getIdUser }) => {
 
       if (response.status < 300) {
         showSnackbar("Foydalanuvchi muvaffaqiyatli qo'shildi", "success");
-        getIdUser(response?.data?.user?.id);
-        handleClose();
 
-        // Formani tozalash
+        const createdUser = response?.data?.user;
+        const createdUserId = createdUser?.id;
+
+        await dispatch(
+          fetchUsers({
+            pageNumber: 1,
+            pageSize: 200,
+            search: updatedUser.phone || "",
+          }) as any
+        );
+
         setNewUser({
           first_name: "",
           last_name: "",
@@ -134,6 +161,10 @@ const UserModalForm: React.FC<UserModalFormProps> = ({ getIdUser }) => {
           password: "",
         });
         setAvatar(null);
+
+        getIdUser(createdUserId);
+
+        handleClose();
       } else {
         showSnackbar("Foydalanuvchini saqlashda xato", "error");
       }
@@ -194,15 +225,18 @@ const UserModalForm: React.FC<UserModalFormProps> = ({ getIdUser }) => {
           <div className={styles.modalContent}>
             <div className={styles.userSelectSection}>
               <h3>Mavjud foydalanuvchilar</h3>
+
               <Autocomplete
                 id="user-select-dropdown"
-                options={users}
+                options={allUsers}
                 getOptionLabel={(option: any) =>
                   `${option.name || "Nomsiz"} (${
                     option.phone || "Telefon raqami yo'q"
                   })`
                 }
                 onChange={(event, value) => setSelectedUser(value)}
+                value={selectedUser}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
                 renderInput={(params) => (
                   <TextField
                     {...params}

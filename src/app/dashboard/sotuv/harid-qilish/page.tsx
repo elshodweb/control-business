@@ -255,7 +255,6 @@ const Page = () => {
     updateProducts(index, value?.id, newSections[index].productTitle);
   };
 
-  // Update the handleSubmit function to use discounted prices
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     if (isCheckVisible) return;
@@ -330,7 +329,7 @@ const Page = () => {
     newSections[index].totalPrice = value.price * sections[index].quantity;
     newSections[index].price = value.price;
     newSections[index].type = value.type;
-    newSections[index].discountPrice = value.price; // Initialize discount price to regular price
+    newSections[index].discountPrice = value.price;
 
     if (value.category_id) {
       const categoryFromList = categories.find(
@@ -429,24 +428,32 @@ const Page = () => {
     );
   };
   const setUser = async (id: string) => {
-    await dispatch(fetchUsers({ pageNumber: 1, pageSize: 200, search: phone }));
+    await dispatch(fetchUsers({ pageNumber: 1, pageSize: 1, search: id }));
 
     const updatedUsers = store.getState().users.users;
     const user = updatedUsers.find((user) => user.id === id);
 
     if (user) {
-      setPhone(user.phone);
+      setPhone(user.phone || "");
       setSelectedUser(user);
+    } else {
+      await dispatch(fetchUsers({ pageNumber: 1, pageSize: 200, search: "" }));
+
+      const allUsers = store.getState().users.users;
+      const foundUser = allUsers.find((user) => user.id === id);
+
+      if (foundUser) {
+        setPhone(foundUser.phone || "");
+        setSelectedUser(foundUser);
+      }
     }
   };
 
-  // Add these functions to handle discount changes
   const handleDiscountChange = (index: number, checked: boolean) => {
     const newSections = [...sections];
     newSections[index].hasDiscount = checked;
 
     if (!checked) {
-      // Reset discount price and recalculate total price based on original price
       newSections[index].discountPrice = 0;
       updateTotalPrice(index, newSections[index]);
     }
@@ -460,13 +467,11 @@ const Page = () => {
     const newSections = [...sections];
     newSections[index].discountPrice = value;
 
-    // Update total price based on discounted price
     if (newSections[index].selectedProduct) {
       const totalPrice =
         value * newSections[index].quantity * newSections[index].rentalDays;
       newSections[index].totalPrice = totalPrice;
 
-      // Also update daily price
       newSections[index].dailyPrice = value * newSections[index].quantity;
     }
 
@@ -501,13 +506,11 @@ const Page = () => {
 
             <div className={styles.userSelectionContainer}>
               {!selectedUser ? (
-                // Show this content when no user is selected
                 <div className={styles.noUserSelected}>
                   <p>Foydalanuvchi tanlanmagan</p>
                   <UserModalForm getIdUser={setUser} />
                 </div>
               ) : (
-                // Show this content when a user is selected
                 <div className={styles.userDetails}>
                   <div className={styles.userInfo}>
                     <h5>Tanlangan foydalanuvchi</h5>

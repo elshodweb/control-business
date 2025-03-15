@@ -245,7 +245,6 @@
   }
 }
 
-/* Desktop ekranlar uchun - 601px dan katta o'lchamlar uchun */
 @media (min-width: 601px) {
   .modalContent {
     flex-direction: row;
@@ -265,7 +264,6 @@
   }
 }
 
-/* Mobil qurilmalar uchun - 600px dan kichik o'lchamlar uchun */
 @media (max-width: 600px) {
   .modalTitle {
     font-size: 20px;
@@ -295,7 +293,6 @@
   }
 }
 
-/* Kichik mobil qurilmalar uchun - 400px dan kichik o'lchamlar uchun */
 @media (max-width: 400px) {
   .modalTitle {
     font-size: 18px;
@@ -312,7 +309,6 @@
   }
 }
 
-/* Tablet qurilmalar uchun - 1024px dan kichik o'lchamlar uchun */
 @media (max-width: 1024px) {
   .modalContent {
     .userSelectSection {
