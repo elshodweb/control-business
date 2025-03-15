@@ -509,12 +509,18 @@ const Page = () => {
               ) : (
                 // Show this content when a user is selected
                 <div className={styles.userDetails}>
-                  <div>
+                  <div className={styles.userInfo}>
                     <h5>Tanlangan foydalanuvchi</h5>
-                    <p>Ism: {selectedUser.name}</p>
-                    <p>Telefon: {selectedUser.phone}</p>
+                    <p>
+                      <strong>Ism:</strong> {selectedUser.name}
+                    </p>
+                    <p>
+                      <strong>Telefon:</strong> {selectedUser.phone}
+                    </p>
                     {selectedUser.comment && (
-                      <p>Izoh: {selectedUser.comment}</p>
+                      <p>
+                        <strong>Izoh:</strong> {selectedUser.comment}
+                      </p>
                     )}
                   </div>
                   <div className={styles.userActions}>
@@ -523,6 +529,7 @@ const Page = () => {
                       color="primary"
                       onClick={() => setSelectedUser(null)}
                       size="small"
+                      fullWidth
                     >
                       O'zgartirish
                     </Button>

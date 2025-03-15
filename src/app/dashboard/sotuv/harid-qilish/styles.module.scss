@@ -67,6 +67,11 @@ $transition: all 0.3s ease;
   width: 100%;
   max-width: 300px;
   height: max-content;
+  margin-bottom: 24px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #f8f9fa;
 }
 
 .product {
@@ -75,6 +80,23 @@ $transition: all 0.3s ease;
   max-width: 100%;
   height: max-content;
   flex: 1 1 auto;
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #ffffff;
+
+  .formRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+
+    .formColumn {
+      flex: 1;
+      min-width: 250px;
+    }
+  }
 }
 
 .car {
@@ -136,27 +158,32 @@ $transition: all 0.3s ease;
 
 .userDetails {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   padding: 16px;
   background-color: #e8f5e9;
   border-radius: 8px;
   border-left: 4px solid #4caf50;
 
-  h5 {
-    margin: 0 0 8px 0;
-    font-size: 17px;
-    color: #2e7d32;
-  }
+  .userInfo {
+    margin-bottom: 16px;
 
-  p {
-    margin: 4px 0;
-    font-size: 14px;
+    h5 {
+      margin: 0 0 8px 0;
+      font-size: 17px;
+      color: #2e7d32;
+    }
+
+    p {
+      margin: 4px 0;
+      font-size: 14px;
+    }
   }
 
   .userActions {
     display: flex;
     align-items: center;
+    width: 100%;
+    max-width: 200px;
   }
 }
 
@@ -188,11 +215,12 @@ $transition: all 0.3s ease;
 
 // Buttons & Actions
 .btnWithIcon {
-  display: flex;
-  align-items: center;
-  gap: $spacing-sm;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
   margin-bottom: $spacing-sm;
   margin-left: $spacing-sm;
+  padding: 8px 16px !important;
 }
 
 .actionBtn {
@@ -211,6 +239,19 @@ $transition: all 0.3s ease;
   justify-content: flex-end;
   gap: $spacing-md;
   margin-top: $spacing-xl;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+@media (max-width: 576px) {
+  .buttonGroup {
+    justify-content: center;
+
+    button {
+      width: 100%;
+      margin-left: 0 !important;
+    }
+  }
 }
 
 // Print Preview
@@ -239,6 +280,14 @@ $transition: all 0.3s ease;
   .userSection,
   .product {
     max-width: 100%;
+  }
+
+  .product {
+    .formRow {
+      .formColumn {
+        min-width: calc(50% - 12px);
+      }
+    }
   }
 }
 
@@ -287,6 +336,16 @@ $transition: all 0.3s ease;
   .sectionTitle {
     font-size: 18px;
   }
+
+  .product {
+    .formRow {
+      flex-direction: column;
+
+      .formColumn {
+        width: 100%;
+      }
+    }
+  }
 }
 
 @media (max-width: 1600px) {
@@ -322,5 +381,26 @@ $transition: all 0.3s ease;
     margin: 0 0 16px 0;
     font-size: 16px;
     color: #666;
+    text-align: center;
+  }
+}
+
+/* Tablet va desktop uchun */
+@media (min-width: 768px) {
+  .userDetails {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    .userInfo {
+      margin-bottom: 0;
+    }
+  }
+}
+
+/* Mobil telefonlar uchun */
+@media (max-width: 767px) {
+  .userActions {
+    margin: 0 auto;
   }
 }
