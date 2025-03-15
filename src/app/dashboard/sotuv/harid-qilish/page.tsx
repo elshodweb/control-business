@@ -35,6 +35,8 @@ import {
 import { useReactToPrint } from "react-to-print";
 import UserDataSummary from "@/components/Check/Check";
 import UserModalForm from "@/components/UserModalForm/UserModalForm";
+import ProductModalForm from "@/components/ProductModalForm/ProductModalForm";
+import ProductsTable from "@/components/ProductsTable/ProductsTable";
 
 const Page = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -478,6 +480,16 @@ const Page = () => {
     setSections(newSections);
   };
 
+  // New function to handle adding a product from modal
+  const handleAddProduct = (product: any) => {
+    setSections((prev) => [...prev, product]);
+  };
+
+  // Function to remove a product from table
+  const handleRemoveProduct = (index: number) => {
+    setSections((prev) => prev.filter((_, i) => i !== index));
+  };
+
   return (
     <form autoComplete="off" onSubmit={handleSubmit} className={styles.wrapper}>
       <div className={styles.row}>
@@ -541,288 +553,20 @@ const Page = () => {
               )}
             </div>
           </div>
-
-          {sections.map((section, index) => (
-            <div key={index} className={styles.product}>
-              <h2 className={styles.sectionTitle}>
-                <FaBox size={19} /> {index + 1}-Mahsulot
-              </h2>
-
-              {/* Category and Product Selection Row */}
-              <div className={styles.formRow}>
-                <div className={styles.formColumn}>
-                  <h4 className={styles.itemTitle}>Mahsulot kategoriyasini</h4>
-                  <Autocomplete
-                    className={styles.autocomplete}
-                    size="small"
-                    options={categories}
-                    onChange={(event, value) =>
-                      handleChangeCategory(index, value)
-                    }
-                    value={section.selectedCategory}
-                    getOptionLabel={(option) => option.title || "Без названия"}
-                    isOptionEqualToValue={(option, value) =>
-                      option.id === value.id
-                    }
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        size="small"
-                        value={section.categoryTitle}
-                        label="Kategoriya"
-                        variant="outlined"
-                      />
-                    )}
-                  />
-                </div>
-                <div className={styles.formColumn}>
-                  <h4 className={styles.itemTitle}>Mahsulotni tanlash</h4>
-                  <Autocomplete
-                    className={styles.autocomplete}
-                    size="small"
-                    options={autocompleteProducts}
-                    onChange={(event, value) =>
-                      handleSelectProduct(index, value)
-                    }
-                    getOptionLabel={(option: any) =>
-                      option.title + " (" + option.searchable_title_id + ")" ||
-                      "Без названия"
-                    }
-                    clearIcon={false}
-                    isOptionEqualToValue={(option, value) =>
-                      option.id === value.id
-                    }
-                    renderInput={(params) => (
-                      <TextField
-                        required
-                        {...params}
-                        size="small"
-                        value={titleOrId}
-                        label="Product"
-                        variant="outlined"
-                        onChange={(e) => {
-                          const inputValue = e.target.value;
-                          setTitleOrId(inputValue);
-                          const isNumeric = /^\d+$/.test(inputValue);
-
-                          updateProducts(
-                            index,
-                            sections[index].selectedCategory?.id || null,
-                            isNumeric ? "" : inputValue,
-                            isNumeric ? inputValue : null
-                          );
-                        }}
-                      />
-                    )}
-                  />
-                </div>
-              </div>
-
-              {section.selectedProduct && (
-                <>
-                  {/* Price and Quantity Row */}
-                  <div className={styles.formRow}>
-                    <div className={styles.formColumn}>
-                      <h4 className={styles.itemTitle}>
-                        {section.type + " Narxi"}
-                      </h4>
-                      <TextField
-                        required
-                        size="small"
-                        type="number"
-                        minRows={0}
-                        variant="outlined"
-                        value={section.price}
-                        disabled
-                        fullWidth
-                      />
-                    </div>
-                    <div className={styles.formColumn}>
-                      <h4 className={styles.itemTitle}>Arenda olish miqdori</h4>
-                      <TextField
-                        required
-                        size="small"
-                        type="number"
-                        variant="outlined"
-                        value={section.quantity}
-                        onChange={(e) => {
-                          if (+e.target.value > 0) {
-                            handleQuantityChange(index, +e.target.value);
-                          }
-                        }}
-                        fullWidth
-                      />
-                    </div>
-                    <div className={styles.formColumn}>
-                      <h4 className={styles.itemTitle}>Arenda kunlik narxi</h4>
-                      <TextField
-                        required
-                        size="small"
-                        type="number"
-                        variant="outlined"
-                        value={sections[index].dailyPrice}
-                        disabled
-                        fullWidth
-                      />
-                    </div>
-                    <div className={styles.formColumn}>
-                      <h4 className={styles.itemTitle}>Ishlatilmagan kunlar</h4>
-                      <TextField
-                        required
-                        size="small"
-                        type="number"
-                        variant="outlined"
-                        value={sections[index].unusedDays}
-                        onChange={(e) => {
-                          if (+e.target.value > -1) {
-                            updateUnusedDays(index, section, +e.target.value);
-                          }
-                        }}
-                        fullWidth
-                      />
-                    </div>
-                  </div>
-
-                  {/* Date Selection Row */}
-                  <div className={styles.formRow}>
-                    <div className={styles.formColumn}>
-                      <h4 className={styles.itemTitle}>Arenda boshlanishi</h4>
-                      <TextField
-                        required
-                        size="small"
-                        type="date"
-                        className={styles.dateInput}
-                        variant="outlined"
-                        value={section.startDate}
-                        onChange={(e) =>
-                          handleStartDateChange(index, e.target.value)
-                        }
-                        fullWidth
-                      />
-                    </div>
-                    <div className={styles.formColumn}>
-                      <h4 className={styles.itemTitle}>Arenda tugashi</h4>
-                      <TextField
-                        required
-                        size="small"
-                        type="date"
-                        className={styles.dateInput}
-                        variant="outlined"
-                        value={section.endDate}
-                        onChange={(e) =>
-                          handleEndDateChange(index, e.target.value)
-                        }
-                        fullWidth
-                      />
-                    </div>
-                    <div className={styles.formColumn}>
-                      <h4 className={styles.itemTitle}>Arenda Umumiy narxi</h4>
-                      <TextField
-                        required
-                        size="small"
-                        type="number"
-                        variant="outlined"
-                        value={sections[index].totalPrice}
-                        disabled
-                        fullWidth
-                      />
-                    </div>
-
-                    <div className={styles.formColumn}>
-                      <h4 className={styles.itemTitle}>Izoh</h4>
-                      <TextField
-                        required
-                        size="small"
-                        type="text"
-                        variant="outlined"
-                        value={sections[index].comment}
-                        onChange={(e) =>
-                          handleCommentChange(index, e.target.value)
-                        }
-                        fullWidth
-                      />
-                    </div>
-                  </div>
-
-                  {/* Discount Row */}
-                  <div className={styles.formRow}>
-                    <div className={styles.formColumn}>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={section.hasDiscount}
-                            onChange={(e) =>
-                              handleDiscountChange(index, e.target.checked)
-                            }
-                          />
-                        }
-                        label="Chegirma qo'shish"
-                      />
-                    </div>
-                  </div>
-
-                  {section.hasDiscount && (
-                    <div className={styles.formRow}>
-                      <div className={styles.formColumn}>
-                        <h4 className={styles.itemTitle}>Chegirma narxi</h4>
-                        <TextField
-                          required
-                          size="small"
-                          type="number"
-                          variant="outlined"
-                          value={section.discountPrice}
-                          onChange={(e) => {
-                            if (+e.target.value >= 0) {
-                              handleDiscountPriceChange(index, +e.target.value);
-                            }
-                          }}
-                          fullWidth
-                        />
-                      </div>
-                      <div className={styles.formColumn}>
-                        <h4 className={styles.itemTitle}>
-                          Chegirma bilan narx
-                        </h4>
-                        <TextField
-                          size="small"
-                          type="number"
-                          variant="outlined"
-                          value={section.totalPrice}
-                          disabled
-                          fullWidth
-                        />
-                      </div>
-                    </div>
-                  )}
-                </>
-              )}
-
-              <div className={styles.actionBtnContainer}>
-                {index !== 0 && (
-                  <Button
-                    size="small"
-                    variant="contained"
-                    color="error"
-                    onClick={() => handleRemoveSection(index)}
-                    className={styles.deleteButton}
-                  >
-                    <FaTrash size={19} />
-                  </Button>
-                )}
-              </div>
-            </div>
-          ))}
         </div>
-        <Button
-          className={styles.btnWithIcon}
-          style={{ marginLeft: "auto" }}
-          variant="contained"
-          color="primary"
-          onClick={handleAddSection}
-        >
-          <FaPlus size={22} />
-          <span>Mahsulot</span>
-        </Button>
+
+        {/* New products section with modal and table */}
+        <div className={styles.productsSection}>
+          <h2 className={styles.sectionTitle}>
+            <FaBox size={19} /> Mahsulotlar
+          </h2>
+
+          <ProductModalForm addProduct={handleAddProduct} />
+
+          <ProductsTable products={sections} onRemove={handleRemoveProduct} />
+        </div>
+
+        {/* Keep the cars/delivery section as is */}
         <div className={styles.cars}>
           {delivery.map((el, i) => (
             <div key={i} className={styles.car}>
@@ -872,6 +616,8 @@ const Page = () => {
             </div>
           ))}
         </div>
+
+        {/* Keep the remaining buttons and check preview */}
         <Button
           className={styles.btnWithIcon}
           style={{ marginLeft: "auto" }}
@@ -882,6 +628,7 @@ const Page = () => {
           <FaPlus size={22} />
           <span>Mashina</span>
         </Button>
+
         <div className={styles.buttonGroup}>
           <Button
             variant="contained"

@@ -7,6 +7,7 @@ interface Product {
   title: string;
   price: number;
   category_id: ProductCategory;
+  searchable_title_id: string;
 }
 
 interface Pagination {

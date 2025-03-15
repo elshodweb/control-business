@@ -1,0 +1,63 @@
+.addProductButton {
+  margin-bottom: 16px;
+}
+
+.modalTitle {
+  margin-bottom: 24px;
+  color: #1976d2;
+  font-weight: 500;
+}
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formRow {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+  }
+}
+
+.formColumn {
+  flex: 1;
+  min-width: 0;
+}
+
+.checkboxColumn {
+  display: flex;
+  align-items: center;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
