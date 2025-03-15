@@ -1,5 +1,7 @@
 .addProductButton {
   margin-bottom: 16px;
+  max-width: 250px; // Limit width of button
+  margin-left: 0; // Align to left
 }
 
 .modalTitle {
@@ -60,4 +62,9 @@
   justify-content: flex-end;
   gap: 12px;
   margin-top: 24px;
+}
+
+.buttonContainer {
+  display: flex;
+  margin-bottom: 16px;
 }

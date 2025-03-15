@@ -45,6 +45,7 @@ $transition: all 0.3s ease;
   flex-wrap: wrap;
   gap: $spacing-lg;
   margin-bottom: $spacing-xl;
+  width: 100%;
 }
 
 .card {
@@ -261,6 +262,7 @@ $transition: all 0.3s ease;
 @media (max-width: 992px) {
   .rowDiv {
     justify-content: center;
+    flex-direction: column;
   }
 
   .userSection,
@@ -398,4 +400,17 @@ $transition: all 0.3s ease;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   margin-bottom: 24px;
+}
+
+.carServicesSection {
+  width: calc(100% - 320px); // Adjust width to fit next to user section
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+
+  @media (max-width: 992px) {
+    width: 100%; // Full width on smaller screens
+  }
 }

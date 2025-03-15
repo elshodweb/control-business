@@ -37,6 +37,8 @@ import UserDataSummary from "@/components/Check/Check";
 import UserModalForm from "@/components/UserModalForm/UserModalForm";
 import ProductModalForm from "@/components/ProductModalForm/ProductModalForm";
 import ProductsTable from "@/components/ProductsTable/ProductsTable";
+import CarServiceModalForm from "@/components/CarServiceModalForm/CarServiceModalForm";
+import CarServicesTable from "@/components/CarServicesTable/CarServicesTable";
 
 const Page = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -490,6 +492,26 @@ const Page = () => {
     setSections((prev) => prev.filter((_, i) => i !== index));
   };
 
+  // New function to handle adding a car service from modal
+  const handleAddCarService = (carService: any) => {
+    // Find the user details if there's a user_id
+    if (carService.user_id) {
+      const user = users.find((user) => user.id === carService.user_id);
+      if (user) {
+        carService.user_name = `${user.name || ""} ${
+          user.last_name || ""
+        }`.trim();
+      }
+    }
+
+    setDelivery((prev) => [...prev, carService]);
+  };
+
+  // Function to remove a car service from table
+  const handleRemoveCarService = (index: number) => {
+    setDelivery((prev) => prev.filter((_, i) => i !== index));
+  };
+
   return (
     <form autoComplete="off" onSubmit={handleSubmit} className={styles.wrapper}>
       <div className={styles.row}>
@@ -506,6 +528,7 @@ const Page = () => {
       </Snackbar>
       <div className={styles.content}>
         <div className={styles.rowDiv}>
+          {/* User section */}
           <div className={styles.userSection}>
             <h2 className={styles.sectionTitle}>
               <FaUser size={19} /> Foydalanuvchi tanlash
@@ -553,9 +576,23 @@ const Page = () => {
               )}
             </div>
           </div>
+
+          {/* Car services section - now placed next to user section */}
+          <div className={styles.carServicesSection}>
+            <h2 className={styles.sectionTitle}>
+              <FaCar size={19} /> Mashinalar
+            </h2>
+
+            <CarServiceModalForm addCarService={handleAddCarService} />
+
+            <CarServicesTable
+              carServices={delivery}
+              onRemove={handleRemoveCarService}
+            />
+          </div>
         </div>
 
-        {/* New products section with modal and table */}
+        {/* Products section - remains full width */}
         <div className={styles.productsSection}>
           <h2 className={styles.sectionTitle}>
             <FaBox size={19} /> Mahsulotlar
@@ -566,69 +603,7 @@ const Page = () => {
           <ProductsTable products={sections} onRemove={handleRemoveProduct} />
         </div>
 
-        {/* Keep the cars/delivery section as is */}
-        <div className={styles.cars}>
-          {delivery.map((el, i) => (
-            <div key={i} className={styles.car}>
-              <h2 className={styles.sectionTitle}>
-                <FaCar size={19} /> {i + 1}-Mashina
-              </h2>
-              <div className={styles.formRow}>
-                <div className={styles.formColumn}>
-                  <h4 className={styles.itemTitle}>Mashina narxi</h4>
-                  <TextField
-                    required
-                    size="small"
-                    variant="outlined"
-                    label="Narhi"
-                    value={el.price}
-                    onChange={(e) => changeDelivery(i, "price", e.target.value)}
-                    fullWidth
-                  />
-                </div>
-
-                <div className={styles.formColumn}>
-                  <h4 className={styles.itemTitle}>Izoh</h4>
-                  <TextField
-                    required
-                    size="small"
-                    variant="outlined"
-                    label="Kommentariya"
-                    value={el.comment}
-                    onChange={(e) =>
-                      changeDelivery(i, "comment", e.target.value)
-                    }
-                    fullWidth
-                  />
-                </div>
-              </div>
-              <div className={styles.actionBtnContainer}>
-                <Button
-                  size="small"
-                  variant="contained"
-                  color="error"
-                  onClick={() => handleRemoveDelivery(i)}
-                  className={styles.deleteButton}
-                >
-                  <FaTrash size={19} />
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-
         {/* Keep the remaining buttons and check preview */}
-        <Button
-          className={styles.btnWithIcon}
-          style={{ marginLeft: "auto" }}
-          variant="contained"
-          color="primary"
-          onClick={handleAddDelivery}
-        >
-          <FaPlus size={22} />
-          <span>Mashina</span>
-        </Button>
-
         <div className={styles.buttonGroup}>
           <Button
             variant="contained"

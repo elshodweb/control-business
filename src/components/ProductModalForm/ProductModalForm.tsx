@@ -241,16 +241,17 @@ const ProductModalForm: React.FC<ProductModalFormProps> = ({ addProduct }) => {
 
   return (
     <>
-      <Button
-        onClick={handleOpen}
-        variant="contained"
-        color="primary"
-        fullWidth
-        className={styles.addProductButton}
-      >
-        <FaBox size={18} style={{ marginRight: "8px" }} />
-        Mahsulot qo'shish
-      </Button>
+      <div className={styles.buttonContainer}>
+        <Button
+          onClick={handleOpen}
+          variant="contained"
+          color="primary"
+          className={styles.addProductButton}
+        >
+          <FaBox size={18} style={{ marginRight: "8px" }} />
+          Mahsulot qo'shish
+        </Button>
+      </div>
 
       <Snackbar
         open={snackbarOpen}

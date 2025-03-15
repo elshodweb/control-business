@@ -1,0 +1,40 @@
+.addCarButton {
+  margin-bottom: 16px;
+  max-width: 250px; // Limit width of button
+  margin-left: 0; // Align to left
+}
+
+.modalTitle {
+  margin-bottom: 24px;
+  color: #1976d2;
+  font-weight: 500;
+}
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.userFormWrapper {
+  margin-top: 8px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.buttonContainer {
+  display: flex;
+  margin-bottom: 16px;
+}
