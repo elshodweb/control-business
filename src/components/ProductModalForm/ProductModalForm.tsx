@@ -45,7 +45,6 @@ const ProductModalForm: React.FC<ProductModalFormProps> = ({ addProduct }) => {
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -86,7 +85,7 @@ const ProductModalForm: React.FC<ProductModalFormProps> = ({ addProduct }) => {
     );
   };
 
-  // Filter products when category or search term changes
+  // Filter products when category changes
   useEffect(() => {
     if (products && products.length > 0) {
       let filtered = [...products];
@@ -98,23 +97,9 @@ const ProductModalForm: React.FC<ProductModalFormProps> = ({ addProduct }) => {
         );
       }
 
-      // Filter by search term (product name or ID)
-      if (searchTerm) {
-        const isNumeric = /^\d+$/.test(searchTerm);
-        filtered = filtered.filter((product) => {
-          if (isNumeric) {
-            return product.searchable_title_id.includes(searchTerm);
-          } else {
-            return product.title
-              .toLowerCase()
-              .includes(searchTerm.toLowerCase());
-          }
-        });
-      }
-
       setFilteredProducts(filtered);
     }
-  }, [products, selectedCategory, searchTerm]);
+  }, [products, selectedCategory]);
 
   const handleClose = () => {
     setOpen(false);
@@ -132,7 +117,6 @@ const ProductModalForm: React.FC<ProductModalFormProps> = ({ addProduct }) => {
     setComment("");
     setHasDiscount(false);
     setDiscountPrice(0);
-    setSearchTerm("");
   };
 
   const handleCategoryChange = (_: any, value: any) => {
@@ -140,10 +124,12 @@ const ProductModalForm: React.FC<ProductModalFormProps> = ({ addProduct }) => {
     setSelectedProduct(null);
   };
 
-  const handleProductChange = (_: any, value: any) => {
-    setSelectedProduct(value);
-    if (value) {
-      setDiscountPrice(value.price);
+  const handleProductChange = (event: any) => {
+    const productId = event.target.value;
+    const product = products.find((p) => p.id === productId);
+    setSelectedProduct(product);
+    if (product) {
+      setDiscountPrice(product.price);
     }
   };
 
@@ -313,41 +299,25 @@ const ProductModalForm: React.FC<ProductModalFormProps> = ({ addProduct }) => {
                   )}
                 />
               </div>
-
-              <div className={styles.formColumn}>
-                <Typography variant="subtitle2">Mahsulot qidirish</Typography>
-                <TextField
-                  size="small"
-                  fullWidth
-                  placeholder="Nomi yoki ID bo'yicha qidirish"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
             </div>
 
             <div className={styles.formRow}>
               <div className={styles.formColumn}>
                 <Typography variant="subtitle2">Mahsulot</Typography>
-                <Autocomplete
-                  size="small"
-                  options={filteredProducts || []}
-                  onChange={handleProductChange}
-                  value={selectedProduct}
-                  getOptionLabel={(option) =>
-                    `${option.title} (${option.searchable_title_id})`
-                  }
-                  isOptionEqualToValue={(option, value) =>
-                    option.id === value?.id
-                  }
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      placeholder="Mahsulotni tanlang"
-                      variant="outlined"
-                    />
-                  )}
-                />
+                <FormControl fullWidth size="small">
+                  <InputLabel>Mahsulotni tanlang</InputLabel>
+                  <Select
+                    value={selectedProduct?.id || ""}
+                    onChange={handleProductChange}
+                    label="Mahsulotni tanlang"
+                  >
+                    {filteredProducts.map((product) => (
+                      <MenuItem key={product.id} value={product.id}>
+                        {product.title} ({product.searchable_title_id})
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </div>
             </div>
 
