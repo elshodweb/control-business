@@ -457,9 +457,44 @@ const Page = () => {
     setDelivery((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Detect sidebar state changes
+  useEffect(() => {
+    const handleSidebarChange = () => {
+      // Check sidebar state by checking its width
+      const sidebar = document.querySelector('[class^="Sidebar_sidebar"]');
+      if (sidebar) {
+        const isOpen = sidebar.classList.contains("Sidebar_open__c4zz_");
+        setSidebarOpen(isOpen);
+      }
+    };
+
+    // Initial check
+    handleSidebarChange();
+
+    // Set up a mutation observer to detect sidebar class changes
+    const observer = new MutationObserver(handleSidebarChange);
+    const sidebar = document.querySelector('[class^="Sidebar_sidebar"]');
+    if (sidebar) {
+      observer.observe(sidebar, {
+        attributes: true,
+        attributeFilter: ["class"],
+      });
+    }
+
+    return () => {
+      observer && observer.disconnect();
+    };
+  }, []);
+
   return (
     <form autoComplete="off" onSubmit={handleSubmit} className={styles.wrapper}>
-      <div className={styles.row}>
+      <div
+        className={`${styles.row} ${
+          sidebarOpen ? styles.rowWithOpenSidebar : styles.rowWithClosedSidebar
+        }`}
+      >
         <Title>Harid qilish</Title>
       </div>
       <Snackbar

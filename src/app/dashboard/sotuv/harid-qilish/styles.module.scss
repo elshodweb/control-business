@@ -24,11 +24,22 @@ $transition: all 0.3s ease;
   justify-content: space-between;
   position: fixed;
   top: 0;
-  width: calc(100% - 80px);
+  right: 0; // Change from width calculation to right: 0
+  left: 60px; // Default sidebar width in closed state
   background: $background-light;
   z-index: 10;
   padding: $spacing-md;
-  box-shadow: $box-shadow;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: left 0.3s ease; // Add transition for smooth movement
+}
+
+// Add classes to react to sidebar state
+.rowWithClosedSidebar {
+  left: 60px;
+}
+
+.rowWithOpenSidebar {
+  left: 220px;
 }
 
 .content {
