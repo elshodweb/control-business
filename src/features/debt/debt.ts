@@ -61,21 +61,16 @@ const initialState: DebtState = {
 
 export const fetchDebts = createAsyncThunk<
   ApiResponse,
-  { pageNumber: number; pageSize: number }
+  { pageNumber: number; pageSize: number; search?: string }
 >("debts/fetchDebts", async (params) => {
-  const { pageNumber, pageSize } = params;
-  const response = await axiosInstance.get<ApiResponse>(
-    `/debt/all`,
-    {
-      params: {
-        pageNumber,
-        pageSize,
-      },
-      headers: {
-        accept: "*/*",
-      },
-    }
-  );
+  const { pageNumber, pageSize, search } = params;
+  const response = await axiosInstance.get<ApiResponse>(`/debt/all`, {
+    params: {
+      pageNumber,
+      pageSize,
+      search: search || "",
+    },
+  });
   return response.data;
 });
 
@@ -89,11 +84,14 @@ const debtSlice = createSlice({
         state.status = "loading";
         state.error = null;
       })
-      .addCase(fetchDebts.fulfilled, (state, action: PayloadAction<ApiResponse>) => {
-        state.status = "succeeded";
-        state.debts = action.payload.results;
-        state.pagination = action.payload.pagination;
-      })
+      .addCase(
+        fetchDebts.fulfilled,
+        (state, action: PayloadAction<ApiResponse>) => {
+          state.status = "succeeded";
+          state.debts = action.payload.results;
+          state.pagination = action.payload.pagination;
+        }
+      )
       .addCase(fetchDebts.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message || "Failed to fetch debts";

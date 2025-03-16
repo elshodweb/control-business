@@ -19,11 +19,13 @@ import {
   MenuItem,
   TextField,
   Button,
+  InputAdornment,
 } from "@mui/material";
 import { fetchUsers } from "@/features/users/users";
 import Loader from "@/components/Loader/Loader";
 import UserModalForm from "@/components/UserModalForm/UserModalForm";
 import Search from "@/components/Search/Search";
+import { FaSearch } from "react-icons/fa";
 
 // Компонент Alert для уведомлений
 const Alert = forwardRef<HTMLDivElement, React.ComponentProps<typeof MuiAlert>>(
@@ -37,14 +39,13 @@ const CarServicePage = () => {
   const { carServices, status, error, pagination } = useSelector(
     (state: RootState) => state.carServices
   );
-  const [search, setSearch] = useState("");
-  const {
-    users,
-    status: Ustatus,
-    error: Uerror,
-    pagination: Upagination,
-  } = useSelector((state: RootState) => state.users);
+  const { users } = useSelector((state: RootState) => state.users);
 
+  // State for managing search
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  // UI state
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
@@ -64,26 +65,39 @@ const CarServicePage = () => {
   const [profitOrExpenseFilter, setProfitOrExpenseFilter] = useState<
     string | null
   >(null);
+
+  // Debounce search input
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
+
+  // Set user for form
   const setUser = (id: string) => {
-    dispatch(fetchUsers({ pageNumber: 1, pageSize: 200, search: "null" }));
+    dispatch(fetchUsers({ pageNumber: 1, pageSize: 200, search: "" }));
     setFormData({ ...formData, user_id: id });
   };
+
+  // Initial data load and when filters change
   useEffect(() => {
     dispatch(
       fetchCarServices({
         pageNumber: 1,
         pageSize,
         profit_or_expense: profitOrExpenseFilter,
+        search: debouncedSearch,
       })
     );
     dispatch(
       fetchUsers({
         pageNumber: 1,
         pageSize: 200,
-        search: "null",
+        search: "",
       })
     );
-  }, [dispatch, pageSize, profitOrExpenseFilter]);
+  }, [dispatch, pageSize, profitOrExpenseFilter, debouncedSearch]);
 
   const handleSnackbarClose = (
     event?: React.SyntheticEvent | Event,
@@ -113,12 +127,13 @@ const CarServicePage = () => {
             pageNumber: 1,
             pageSize,
             profit_or_expense: profitOrExpenseFilter,
+            search: debouncedSearch,
           })
         );
         setIsConfirmDeleteOpen(false);
         showSnackbar("Servis muvaffaqiyatli oʻchirildi", "success");
       } else {
-        showSnackbar("Servisni o‘chirib bo‘lmadi", "error");
+        showSnackbar("Servisni o'chirib bo'lmadi", "error");
       }
     } catch (error) {
       showSnackbar("Servisni oʻchirishda xatolik yuz berdi", "error");
@@ -138,7 +153,7 @@ const CarServicePage = () => {
           ? "profit"
           : "",
       comment: service.comment,
-      user_id: service.user_id.id || "",
+      user_id: service.user_id?.id || "",
     });
     setIsModalOpen(true);
   };
@@ -170,6 +185,7 @@ const CarServicePage = () => {
             pageNumber: 1,
             pageSize,
             profit_or_expense: profitOrExpenseFilter,
+            search: debouncedSearch,
           })
         );
         setIsModalOpen(false);
@@ -193,7 +209,7 @@ const CarServicePage = () => {
         <Title>Mashinalar</Title>
         <div className={styles.right}>
           <AddBtn onClick={handleCreate} />
-          <FormControl size="small" className={styles.select} fullWidth>
+          <FormControl size="small" className={styles.select}>
             <InputLabel id="profit-expense-label">Turini tanlang</InputLabel>
             <Select
               labelId="profit-expense-label"
@@ -206,23 +222,25 @@ const CarServicePage = () => {
               <MenuItem value="expense">Xarajat</MenuItem>
             </Select>
           </FormControl>
-          <Search
-            onChange={(e) => {
-              setSearch(e.target.value);
-              dispatch(
-                fetchUsers({
-                  pageNumber: 1,
-                  pageSize,
-                  search: e.target.value,
-                })
-              );
-            }}
-            placeholder="Qidirish"
-            search={search}
-            onClick={() => {
-              dispatch(fetchUsers({ pageNumber: 1, pageSize, search: search }));
-            }}
-          />
+
+          {/* Search input field */}
+          <div className={styles.searchContainer}>
+            <TextField
+              variant="outlined"
+              placeholder="Qidirish..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              size="small"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <FaSearch />
+                  </InputAdornment>
+                ),
+              }}
+              className={styles.searchInput}
+            />
+          </div>
         </div>
       </div>
 
@@ -241,15 +259,17 @@ const CarServicePage = () => {
       {status === "succeeded" && (
         <>
           <CustomTable
-            keys={["comment", "price", "profit_or_expense", "user_name"]} // Добавляем новый ключ "user_name"
-            titles={["Izoh", "Narhi", "Turi", "Foydalanuvchi"]} // Добавляем заголовок для столбца
+            keys={["comment", "price", "profit_or_expense", "user_name"]}
+            titles={["Izoh", "Narhi", "Turi", "Foydalanuvchi"]}
             data={carServices.map((service) => ({
               ...service,
               profit_or_expense:
                 service.profit_or_expense === "profit" ? "Daromad" : "Xarajat",
               user_name: service.user_id
-                ? `${service.user_id.name} ${service.user_id.last_name}`
-                : "null", // Добавляем поле user_name
+                ? `${service.user_id.name || ""} ${
+                    service.user_id.last_name || ""
+                  }`
+                : "Foydalanuvchi yo'q",
             }))}
             onDelete={(service) => {
               setSelectedService(service);
@@ -266,6 +286,7 @@ const CarServicePage = () => {
                   pageNumber: page,
                   pageSize,
                   profit_or_expense: profitOrExpenseFilter,
+                  search: debouncedSearch,
                 })
               );
             }}
@@ -330,15 +351,14 @@ const CarServicePage = () => {
                   label="Foydalanuvchi"
                   required
                 >
-                  {/* <MenuItem value={"null"}>Olib tashlash</MenuItem> */}
                   {users.map((user, i) => (
                     <MenuItem key={i} value={user.id}>
-                      {user.name}
+                      {user.name || ""} {user.last_name || ""}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
-              <UserModalForm getIdUser={setUser}></UserModalForm>
+              <UserModalForm getIdUser={setUser} />
               <Button
                 type="submit"
                 variant="contained"
@@ -355,7 +375,7 @@ const CarServicePage = () => {
             onClose={() => setIsConfirmDeleteOpen(false)}
             title="O'chirishni Tasdiqlash"
           >
-            <p>Ushbu kategoriyani o‘chirishga ishonchingiz komilmi?</p>
+            <p>Ushbu servisni o'chirishga ishonchingiz komilmi?</p>
             <button onClick={handleDelete}>Ha, O'chirish</button>
             <button onClick={() => setIsConfirmDeleteOpen(false)}>
               Bekor qilish

@@ -19,10 +19,12 @@ import {
   MenuItem,
   TextField,
   Button,
+  InputAdornment,
 } from "@mui/material";
 import { fetchUsers } from "@/features/users/users";
 import Loader from "@/components/Loader/Loader";
 import UserModalForm from "@/components/UserModalForm/UserModalForm";
+import { FaSearch } from "react-icons/fa";
 
 const Alert = forwardRef<HTMLDivElement, React.ComponentProps<typeof MuiAlert>>(
   function Alert(props, ref) {
@@ -32,16 +34,16 @@ const Alert = forwardRef<HTMLDivElement, React.ComponentProps<typeof MuiAlert>>(
 
 const DebtPage = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { debts, status, error, pagination } = useSelector(
+  const { debts, pagination, status, error } = useSelector(
     (state: RootState) => state.debts
   );
+  const { users } = useSelector((state: RootState) => state.users);
 
-  const {
-    users,
-    status: Ustatus,
-    error: Uerror,
-  } = useSelector((state: RootState) => state.users);
+  // Search state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
+  // UI state
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
@@ -50,26 +52,44 @@ const DebtPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedDebt, setSelectedDebt] = useState<any>(null);
+  const [pageSize, setPageSize] = useState(10);
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+
+  // Form data
   const [formData, setFormData] = useState({
     user_id: "",
-    remaining_debt: "",
-    isActive: false,
     comment: "",
     dayToBeGiven: "",
     dayGiven: "",
+    remaining_debt: "",
+    isActive: false,
   });
 
+  // Debounce search input
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
+
+  // Initial data load and when search changes
+  useEffect(() => {
+    dispatch(
+      fetchDebts({
+        pageNumber: 1,
+        pageSize,
+        search: debouncedSearch,
+      })
+    );
+    dispatch(fetchUsers({ pageNumber: 1, pageSize: 200, search: "" }));
+  }, [dispatch, pageSize, debouncedSearch]);
+
+  // Set user for form
   const setUser = (id: string) => {
-    dispatch(fetchUsers({ pageNumber: 1, pageSize: 200, search: "null" }));
+    dispatch(fetchUsers({ pageNumber: 1, pageSize: 200, search: "" }));
     setFormData({ ...formData, user_id: id });
   };
-  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
-  const [pageSize, setPageSize] = useState(10);
-
-  useEffect(() => {
-    dispatch(fetchDebts({ pageNumber: 1, pageSize }));
-    dispatch(fetchUsers({ pageNumber: 1, pageSize: 200, search: "null" }));
-  }, [dispatch, pageSize]);
 
   const handleSnackbarClose = (
     event?: React.SyntheticEvent | Event,
@@ -94,14 +114,20 @@ const DebtPage = () => {
       );
 
       if (response.status < 300) {
-        dispatch(fetchDebts({ pageNumber: 1, pageSize }));
+        dispatch(
+          fetchDebts({
+            pageNumber: 1,
+            pageSize,
+            search: debouncedSearch,
+          })
+        );
         setIsConfirmDeleteOpen(false);
-        showSnackbar("Debt successfully deleted", "success");
+        showSnackbar("Qarz muvaffaqiyatli o'chirildi", "success");
       } else {
-        showSnackbar("Failed to delete debt", "error");
+        showSnackbar("Qarzni o'chirib bo'lmadi", "error");
       }
     } catch (error) {
-      showSnackbar("Error occurred while deleting debt", "error");
+      showSnackbar("Qarzni o'chirishda xatolik yuz berdi", "error");
     }
   };
 
@@ -112,9 +138,9 @@ const DebtPage = () => {
     setFormData({
       user_id: debt?.user_id?.id || "",
       comment: debt?.comment || "",
-      dayGiven: debt?.dayGiven || "",
-      dayToBeGiven: debt?.dayToBeGiven || "",
-      isActive: debt?.isActive || "",
+      dayGiven: debt?.dayGiven?.split("T")[0] || "",
+      dayToBeGiven: debt?.dayToBeGiven?.split("T")[0] || "",
+      isActive: debt?.isActive === "Faol" || debt?.isActive === true,
       remaining_debt: debt?.remaining_debt || "",
     });
     setIsModalOpen(true);
@@ -149,28 +175,53 @@ const DebtPage = () => {
       });
 
       if (response.status >= 200 && response.status < 300) {
-        dispatch(fetchDebts({ pageNumber: 1, pageSize }));
+        dispatch(
+          fetchDebts({
+            pageNumber: 1,
+            pageSize,
+            search: debouncedSearch,
+          })
+        );
         setIsModalOpen(false);
         showSnackbar(
           isEditMode
-            ? "Debt successfully updated"
-            : "Debt successfully created",
+            ? "Qarz muvaffaqiyatli yangilandi"
+            : "Qarz muvaffaqiyatli yaratildi",
           "success"
         );
       } else {
-        showSnackbar("Failed to save debt", "error");
+        showSnackbar("Qarzni saqlashda xatolik yuz berdi", "error");
       }
     } catch (error) {
-      showSnackbar("Error occurred while saving debt", "error");
+      showSnackbar("Qarzni saqlashda xatolik yuz berdi", "error");
     }
   };
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.row}>
-        <Title>Debts</Title>
+        <Title>Qarzlar</Title>
         <div className={styles.right}>
           <AddBtn onClick={handleCreate} />
+
+          {/* Search input field */}
+          <div className={styles.searchContainer}>
+            <TextField
+              variant="outlined"
+              placeholder="Qidirish..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              size="small"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <FaSearch />
+                  </InputAdornment>
+                ),
+              }}
+              className={styles.searchInput}
+            />
+          </div>
         </div>
       </div>
 
@@ -184,11 +235,7 @@ const DebtPage = () => {
         </Alert>
       </Snackbar>
 
-      {status === "loading" && (
-        <div>
-          <Loader />{" "}
-        </div>
-      )}
+      {status === "loading" && <Loader />}
       {status === "failed" && <p>Error: {error}</p>}
       {status === "succeeded" && (
         <>
@@ -214,10 +261,12 @@ const DebtPage = () => {
             data={debts.map((debt) => ({
               ...debt,
               user_name: debt.user_id
-                ? `${debt.user_id.first_name} ${debt.user_id.name} `
-                : "User yo'q",
+                ? `${debt.user_id.first_name || ""} ${debt.user_id.name || ""}`
+                : "Foydalanuvchi yo'q",
               isActive: debt.isActive ? "Faol" : "Faol emas",
-              user_phone: debt.user_id ? debt.user_id.phone : "User yo'q",
+              user_phone: debt.user_id
+                ? debt.user_id.phone || "Telefon yo'q"
+                : "Telefon yo'q",
             }))}
             onDelete={(debt) => {
               setSelectedDebt(debt);
@@ -229,7 +278,13 @@ const DebtPage = () => {
           <MyPagination
             currentPage={pagination.currentPage}
             onPageChange={(event, page) => {
-              dispatch(fetchDebts({ pageNumber: page, pageSize }));
+              dispatch(
+                fetchDebts({
+                  pageNumber: page,
+                  pageSize,
+                  search: debouncedSearch,
+                })
+              );
             }}
             pageSize={pageSize}
             setPageSize={setPageSize}
@@ -328,12 +383,13 @@ const DebtPage = () => {
                 >
                   {users.map((user, i) => (
                     <MenuItem key={i} value={user.id}>
-                      {user.first_name} {user.name} ({user.phone})
+                      {user.name || ""} {user.last_name || ""}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
-              <UserModalForm getIdUser={setUser}></UserModalForm>
+              <UserModalForm getIdUser={setUser} />
+
               <Button
                 type="submit"
                 variant="contained"
@@ -346,12 +402,13 @@ const DebtPage = () => {
             </form>
           </Modal>
 
+          {/* Confirmation Modal */}
           <Modal
             isOpen={isConfirmDeleteOpen}
             onClose={() => setIsConfirmDeleteOpen(false)}
             title="O'chirishni Tasdiqlash"
           >
-            <p>Ushbu kategoriyani o‘chirishga ishonchingiz komilmi?</p>
+            <p>Ushbu qarzni o'chirishga ishonchingiz komilmi?</p>
             <button onClick={handleDelete}>Ha, O'chirish</button>
             <button onClick={() => setIsConfirmDeleteOpen(false)}>
               Bekor qilish

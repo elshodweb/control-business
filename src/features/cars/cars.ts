@@ -58,21 +58,24 @@ const initialState: CarServiceState = {
 
 export const fetchCarServices = createAsyncThunk<
   ApiResponse,
-  { pageNumber: number; pageSize: number; profit_or_expense: string | null }
->(
-  "carServices/fetchCarServices",
-  async (params) => {
-    const { pageNumber, pageSize, profit_or_expense } = params;
-    const response = await axiosInstance.get<ApiResponse>(`/car-service/all`, {
-      params: {
-        pageNumber,
-        pageSize,
-        profit_or_expense: profit_or_expense || "null",
-      },
-    });
-    return response.data;
+  {
+    pageNumber: number;
+    pageSize: number;
+    profit_or_expense: string | null;
+    search?: string;
   }
-);
+>("carServices/fetchCarServices", async (params) => {
+  const { pageNumber, pageSize, profit_or_expense, search } = params;
+  const response = await axiosInstance.get<ApiResponse>(`/car-service/all`, {
+    params: {
+      pageNumber,
+      pageSize,
+      profit_or_expense: profit_or_expense || "null",
+      search: search || "",
+    },
+  });
+  return response.data;
+});
 
 const carServiceSlice = createSlice({
   name: "carServices",
@@ -84,11 +87,14 @@ const carServiceSlice = createSlice({
         state.status = "loading";
         state.error = null;
       })
-      .addCase(fetchCarServices.fulfilled, (state, action: PayloadAction<ApiResponse>) => {
-        state.status = "succeeded";
-        state.carServices = action.payload.results;
-        state.pagination = action.payload.pagination;
-      })
+      .addCase(
+        fetchCarServices.fulfilled,
+        (state, action: PayloadAction<ApiResponse>) => {
+          state.status = "succeeded";
+          state.carServices = action.payload.results;
+          state.pagination = action.payload.pagination;
+        }
+      )
       .addCase(fetchCarServices.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message || "Failed to fetch car services";

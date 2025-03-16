@@ -18,12 +18,34 @@
 
 .select {
   max-width: 300px;
+  
 }
 .right {
   display: flex;
   gap: 5px;
   justify-content: flex-end;
   width: 100%;
+}
+
+.searchContainer {
+  width: 250px;
+  margin-left: 10px;
+}
+
+.searchInput {
+  background-color: #ffffff;
+
+  .MuiOutlinedInput-root {
+    border-radius: 4px;
+
+    &:hover .MuiOutlinedInput-notchedOutline {
+      border-color: #1976d2;
+    }
+
+    &.Mui-focused .MuiOutlinedInput-notchedOutline {
+      border-color: #1976d2;
+    }
+  }
 }
 
 @media (max-width: 530px) {
@@ -38,5 +60,19 @@
 
   .wrapper {
     padding-top: 100px;
+  }
+}
+
+// For mobile devices
+@media (max-width: 768px) {
+  .right {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .searchContainer {
+    width: 100%;
+    margin-left: 0;
   }
 }
