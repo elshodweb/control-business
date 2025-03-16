@@ -7,18 +7,10 @@ import {
   TextField,
   Snackbar,
   Alert,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   Typography,
 } from "@mui/material";
 import styles from "./CarServiceModalForm.module.scss";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "@/store/store";
 import { FaCar, FaPlus } from "react-icons/fa";
-import { fetchUsers } from "@/features/users/users";
-import UserModalForm from "../UserModalForm/UserModalForm";
 
 interface CarServiceModalFormProps {
   addCarService: (carService: any) => void;
@@ -27,14 +19,10 @@ interface CarServiceModalFormProps {
 const CarServiceModalForm: React.FC<CarServiceModalFormProps> = ({
   addCarService,
 }) => {
-  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [price, setPrice] = useState("");
   const [comment, setComment] = useState("");
   const [isMobile, setIsMobile] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<string>("");
-
-  const { users } = useSelector((state: RootState) => state.users);
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -55,13 +43,6 @@ const CarServiceModalForm: React.FC<CarServiceModalFormProps> = ({
 
   const handleOpen = () => {
     setOpen(true);
-    dispatch(
-      fetchUsers({
-        pageNumber: 1,
-        pageSize: 200,
-        search: "",
-      }) as any
-    );
   };
 
   const handleClose = () => {
@@ -72,7 +53,6 @@ const CarServiceModalForm: React.FC<CarServiceModalFormProps> = ({
   const resetForm = () => {
     setPrice("");
     setComment("");
-    setSelectedUser("");
   };
 
   const handleSubmit = () => {
@@ -84,7 +64,6 @@ const CarServiceModalForm: React.FC<CarServiceModalFormProps> = ({
     const carService = {
       price,
       comment,
-      user_id: selectedUser || undefined,
     };
 
     addCarService(carService);
@@ -100,10 +79,6 @@ const CarServiceModalForm: React.FC<CarServiceModalFormProps> = ({
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
-  };
-
-  const setUser = (id: string) => {
-    setSelectedUser(id);
   };
 
   return (
@@ -141,7 +116,7 @@ const CarServiceModalForm: React.FC<CarServiceModalFormProps> = ({
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: isMobile ? "95%" : 500,
+            width: isMobile ? "95%" : 400,
             bgcolor: "background.paper",
             borderRadius: "8px",
             boxShadow: 24,
@@ -183,35 +158,6 @@ const CarServiceModalForm: React.FC<CarServiceModalFormProps> = ({
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
               />
-            </div>
-
-            <div className={styles.formRow}>
-              <Typography variant="subtitle2" gutterBottom>
-                Foydalanuvchi
-              </Typography>
-              <FormControl fullWidth size="small">
-                <InputLabel id="user-select-label">
-                  Foydalanuvchi tanlang
-                </InputLabel>
-                <Select
-                  labelId="user-select-label"
-                  value={selectedUser}
-                  onChange={(e) => setSelectedUser(e.target.value as string)}
-                  label="Foydalanuvchi tanlang"
-                >
-                  <MenuItem value="">
-                    <em>Tanlanmagan</em>
-                  </MenuItem>
-                  {users.map((user) => (
-                    <MenuItem key={user.id} value={user.id}>
-                      {user.name} ({user.phone || "Telefon raqami yo'q"})
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <div className={styles.userFormWrapper}>
-                <UserModalForm getIdUser={setUser} />
-              </div>
             </div>
 
             <div className={styles.actions}>

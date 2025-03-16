@@ -91,35 +91,11 @@ const Page = () => {
       hasDiscount: boolean;
       discountPrice: number;
     })[]
-  >([
-    {
-      selectedCategory: null,
-      comment: "",
-      categoryTitle: "",
-      selectedProduct: null,
-      productTitle: "",
-      quantity: 1,
-      rentalDays: 1,
-      totalPrice: 0,
-      dailyPrice: 0,
-      type: "",
-      price: 0,
-      startDate: "",
-      endDate: "",
-      unusedDays: 0,
-      hasDiscount: false,
-      discountPrice: 0,
-    },
-  ]);
+  >([]); // Empty array instead of default item
   const { carServices, status, error } = useSelector(
     (state: RootState) => state.carServices
   );
-  const [delivery, setDelivery] = useState<DeliveryDetails[]>([
-    {
-      comment: "",
-      price: "",
-    },
-  ]);
+  const [delivery, setDelivery] = useState<DeliveryDetails[]>([]); // Empty array instead of default item
   const [autocompleteProducts, setAutocompleteProducts] = useState(products);
   const [titleOrId, setTitleOrId] = useState("");
 
@@ -494,16 +470,6 @@ const Page = () => {
 
   // New function to handle adding a car service from modal
   const handleAddCarService = (carService: any) => {
-    // Find the user details if there's a user_id
-    if (carService.user_id) {
-      const user = users.find((user) => user.id === carService.user_id);
-      if (user) {
-        carService.user_name = `${user.name || ""} ${
-          user.last_name || ""
-        }`.trim();
-      }
-    }
-
     setDelivery((prev) => [...prev, carService]);
   };
 

@@ -38,7 +38,6 @@ const CarServicesTable: React.FC<CarServicesTableProps> = ({
             <TableCell>№</TableCell>
             <TableCell>Narx</TableCell>
             <TableCell>Izoh</TableCell>
-            <TableCell>Foydalanuvchi</TableCell>
             <TableCell>Amal</TableCell>
           </TableRow>
         </TableHead>
@@ -48,9 +47,6 @@ const CarServicesTable: React.FC<CarServicesTableProps> = ({
               <TableCell>{index + 1}</TableCell>
               <TableCell>{service.price} so'm</TableCell>
               <TableCell>{service.comment || "-"}</TableCell>
-              <TableCell>
-                {service.user_name || "Foydalanuvchi tanlanmagan"}
-              </TableCell>
               <TableCell>
                 <Button
                   variant="contained"
