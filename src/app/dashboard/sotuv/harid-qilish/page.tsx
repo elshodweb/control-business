@@ -241,7 +241,7 @@ const Page = () => {
     const requestData = {
       user_id: selectedUser?.id || "",
       daily_price: sections[0]?.dailyPrice.toString() || "0",
-      comment: sections[0].comment,
+      comment: sections[0]?.comment || "",
       total_price: sections
         .reduce((acc, section) => acc + section.totalPrice, 0)
         .toString(),
@@ -263,36 +263,15 @@ const Page = () => {
       if (response) {
         showSnackbar("Harid muvaffaqiyatli bajarildi", "success");
 
+        // Reset all form fields to empty initial state
         setSelectedUser(null);
-
         setPhone("");
         setIsCheckVisible(false);
-        setSections([
-          {
-            selectedCategory: null,
-            comment: "",
-            categoryTitle: "",
-            selectedProduct: null,
-            productTitle: "",
-            quantity: 1,
-            rentalDays: 1,
-            totalPrice: 0,
-            dailyPrice: 0,
-            type: "",
-            price: 0,
-            startDate: "",
-            endDate: "",
-            unusedDays: 0,
-            hasDiscount: false,
-            discountPrice: 0,
-          },
-        ]);
-        setDelivery([
-          {
-            comment: "",
-            price: "",
-          },
-        ]);
+
+        // Reset sections and delivery to empty arrays
+        setSections([]);
+        setDelivery([]);
+
         setTitleOrId("");
       }
     } catch (error: any) {

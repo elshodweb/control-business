@@ -43,7 +43,7 @@ const Page = () => {
         action: ActionTypesEnum.UPDATE,
       }))
     );
-    let products = data.orderProducts.map((i: any) => {
+    const products = data.orderProducts.map((i: any) => {
       const quantity =
         i.product_id.type == "dona" ? i.quantity_sold : i.measurement_sold;
       const startDate = new Date(i.given_date);
@@ -70,6 +70,7 @@ const Page = () => {
         status: i.IsActive,
         action: ActionTypesEnum.UPDATE,
         unusedDays: i.unused_days,
+        comment: i.comment || "", // Add this property, defaulting to empty string if null
       };
     });
 
@@ -138,6 +139,7 @@ const Page = () => {
       status: "Active",
       action: ActionTypesEnum.GET,
       unusedDays: 0,
+      comment: "", // Add this missing required property
     },
   ]);
   const [delivery, setDelivery] = useState<DeliveryDetails[]>([
@@ -157,7 +159,6 @@ const Page = () => {
         pageNumber: 1,
         pageSize: 100,
         search: phone,
-       
       })
     );
   }, [dispatch, phone]);
@@ -237,6 +238,7 @@ const Page = () => {
         status: "Active",
         action: ActionTypesEnum.CREATE,
         unusedDays: 0,
+        comment: "", // Add this missing property
       },
     ]);
   };

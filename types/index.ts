@@ -1,12 +1,7 @@
 export type RentalDetails = {
-  selectedCategory: {
-    id: string;
-    title: string;
-  } | null;
+  selectedCategory: any;
   categoryTitle: string;
-  selectedProduct: {
-    id: string;
-  } | null;
+  selectedProduct: any;
   productTitle: string;
   quantity: number;
   rentalDays: number;
@@ -16,8 +11,8 @@ export type RentalDetails = {
   price: number;
   startDate: string;
   endDate: string;
-  action?: ActionTypesEnum;
   status?: string;
+  action?: ActionTypesEnum;
   unusedDays: number;
   comment: string;
 };
